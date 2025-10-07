@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>public-key-crypto - Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <i class="fas fa-lock me-2"></i>
+            <span>Cryptography Workshop</span>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+                  aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="index.html">
+                  <i class="fas fa-home me-1"></i> Home
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-book me-1"></i> Modules
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+                  <li>
+                    <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+                  </li>
+                  <li><a class="dropdown-item" href="symmetric-crypto.html">
+                    <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+                  </li>
+                  <li><a class="dropdown-item" href="public-key-crypto.html">
+                    <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+                  </li>
+                  <li><a class="dropdown-item" href="hash-functions.html">
+                    <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+                  </li>
+                  <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                    <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+              </li>
+            </ul>
+            <form class="d-flex">
+              <div class="input-group">
+                <input class="form-control bg-dark text-white border-secondary" type="search" 
+                       placeholder="Search..." aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+  <main class="container">
+    <div class="markdown-body">
+      <h1 id="advanced-public-key-cryptography">Advanced Public Key Cryptography</h1>
+<p>Public key cryptography forms the backbone of modern secure communications, enabling secure key exchange, digital signatures, and encryption without requiring a pre-shared secret. This document covers both classical and post-quantum public key cryptography.</p>
+<h2 id="core-concepts">Core Concepts</h2>
+<h3 id="mathematical-foundations">Mathematical Foundations</h3>
+<ul>
+<li><strong>Group Theory</strong>: Cyclic groups, generators, and discrete logarithms</li>
+<li><strong>Elliptic Curves</strong>: Weierstrass equations, point addition, scalar multiplication</li>
+<li><strong>Lattices</strong>: Basis reduction, shortest vector problem (SVP), learning with errors (LWE)</li>
+<li><strong>Multivariate Polynomials</strong>: Solving systems of multivariate quadratic equations</li>
+<li><strong>Isogenies</strong>: Maps between elliptic curves preserving point addition</li>
+</ul>
+<h3 id="security-properties">Security Properties</h3>
+<ul>
+<li><strong>Semantic Security</strong>: Ciphertext reveals no information about plaintext</li>
+<li><strong>IND-CCA2</strong>: Indistinguishability under adaptive chosen-ciphertext attack</li>
+<li><strong>EUF-CMA</strong>: Existential unforgeability under chosen-message attack</li>
+<li><strong>Forward Secrecy</strong>: Compromised long-term keys don’t compromise past sessions</li>
+<li><strong>Post-Quantum Security</strong>: Resistance against quantum computer attacks</li>
+</ul>
+<h2 id="classical-public-key-cryptography">Classical Public Key Cryptography</h2>
+<h3 id="rsa-cryptosystem">RSA Cryptosystem</h3>
+<ul>
+<li><strong>Security</strong>: Based on integer factorization problem</li>
+<li><strong>Parameters</strong>:<ul>
+<li>Key sizes: 3072-bit minimum (15360-bit for long-term security)</li>
+<li>Public exponent: 65537 (0x10001)</li>
+</ul>
+</li>
+<li><strong>Vulnerabilities</strong>:<ul>
+<li>Padding oracle attacks (Bleichenbacher, Manger)</li>
+<li>Side-channel attacks (timing, power analysis)</li>
+<li>Shor’s algorithm (quantum vulnerability)</li>
+</ul>
+</li>
+</ul>
+<h3 id="elliptic-curve-cryptography-ecc">Elliptic Curve Cryptography (ECC)</h3>
+<ul>
+<li><strong>Security</strong>: Based on elliptic curve discrete logarithm problem (ECDLP)</li>
+<li><strong>Standard Curves</strong>:<ul>
+<li><strong>NIST P-256</strong>: 256-bit security, FIPS 186-4</li>
+<li><strong>Curve25519</strong>: High-performance, 128-bit security</li>
+<li><strong>secp256k1</strong>: Used in Bitcoin, 128-bit security</li>
+<li><strong>BLS12-381</strong>: Pairing-friendly, used in zk-SNARKs</li>
+</ul>
+</li>
+</ul>
+<h3 id="implementation-considerations">Implementation Considerations</h3>
+<ul>
+<li><strong>Constant-time operations</strong>: Prevent timing attacks</li>
+<li><strong>Side-channel resistance</strong>: Power analysis countermeasures</li>
+<li><strong>Fault injection protection</strong>: DPA/SPA countermeasures</li>
+<li><strong>Formal verification</strong>: Use of formally verified implementations</li>
+</ul>
+<h2 id="advanced-implementation-examples">Advanced Implementation Examples</h2>
+<h3 id="python-ecc-with-multiple-curves">Python: ECC with Multiple Curves</h3>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> cryptography.hazmat.primitives <span class="hljs-keyword">import</span> hashes
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="hljs-keyword">import</span> ec
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives <span class="hljs-keyword">import</span> serialization
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives.kdf.hkdf <span class="hljs-keyword">import</span> HKDF
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives.ciphers.aead <span class="hljs-keyword">import</span> AESGCM
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_ecc_keypair</span>(<span class="hljs-params">curve=ec.SECP384R1(<span class="hljs-params"></span>)</span>):
+    <span class="hljs-string">&quot;&quot;&quot;Generate ECC keypair with specified curve.&quot;&quot;&quot;</span>
+    private_key = ec.generate_private_key(curve)
+    <span class="hljs-keyword">return</span> private_key, private_key.public_key()
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">ecdh_derive_key</span>(<span class="hljs-params">private_key, peer_public_key</span>):
+    <span class="hljs-string">&quot;&quot;&quot;Derive shared secret using ECDH.&quot;&quot;&quot;</span>
+    shared_key = private_key.exchange(ec.ECDH(), peer_public_key)
+    
+    <span class="hljs-comment"># Derive a secure key using HKDF</span>
+    derived_key = HKDF(
+        algorithm=hashes.SHA256(),
+        length=<span class="hljs-number">32</span>,
+        salt=<span class="hljs-literal">None</span>,
+        info=<span class="hljs-string">b&#x27;ecdh key derivation&#x27;</span>,
+    ).derive(shared_key)
+    
+    <span class="hljs-keyword">return</span> derived_key
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">encrypt_with_ecc</span>(<span class="hljs-params">message, public_key</span>):
+    <span class="hljs-string">&quot;&quot;&quot;Encrypt a message using ECIES (Elliptic Curve Integrated Encryption Scheme).&quot;&quot;&quot;</span>
+    <span class="hljs-comment"># Generate ephemeral key pair</span>
+    ephemeral_private = ec.generate_private_key(public_key.curve)
+    ephemeral_public = ephemeral_private.public_key()
+    
+    <span class="hljs-comment"># Derive shared secret</span>
+    shared_secret = ecdh_derive_key(ephemeral_private, public_key)
+    
+    <span class="hljs-comment"># Encrypt with AES-GCM</span>
+    nonce = os.urandom(<span class="hljs-number">12</span>)
+    cipher = AESGCM(shared_secret)
+    ciphertext = cipher.encrypt(nonce, message.encode(), <span class="hljs-literal">None</span>)
+    
+    <span class="hljs-comment"># Return ephemeral public key, nonce, and ciphertext</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">&#x27;ephemeral_public&#x27;</span>: ephemeral_public.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            <span class="hljs-built_in">format</span>=serialization.PublicFormat.SubjectPublicKeyInfo
+        ),
+        <span class="hljs-string">&#x27;nonce&#x27;</span>: nonce,
+        <span class="hljs-string">&#x27;ciphertext&#x27;</span>: ciphertext
+    }
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">rsa_decrypt</span>(<span class="hljs-params">private_key, ciphertext</span>):
+    <span class="hljs-keyword">return</span> private_key.decrypt(
+        ciphertext,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=<span class="hljs-literal">None</span>
+        )
+    ).decode()
+</code></pre>
+<h3 id="go-ecdsa-signatures">Go: ECDSA Signatures</h3>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/ecdsa&quot;</span>
+    <span class="hljs-string">&quot;crypto/elliptic&quot;</span>
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;crypto/sha256&quot;</span>
+    <span class="hljs-string">&quot;math/big&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">generateKeyPair</span><span class="hljs-params">()</span></span> (*ecdsa.PrivateKey, <span class="hljs-type">error</span>) {
+    <span class="hljs-keyword">return</span> ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">signMessage</span><span class="hljs-params">(privKey *ecdsa.PrivateKey, message <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) {
+    hash := sha256.Sum256([]<span class="hljs-type">byte</span>(message))
+    r, s, err := ecdsa.Sign(rand.Reader, privKey, hash[:])
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    
+    <span class="hljs-comment">// Encode r and s as fixed-size big-endian bytes</span>
+    <span class="hljs-keyword">const</span> keySize = <span class="hljs-number">32</span> <span class="hljs-comment">// For P-256 curve</span>
+    sig := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, keySize*<span class="hljs-number">2</span>)
+    r.FillBytes(sig[:keySize])
+    s.FillBytes(sig[keySize:])
+    
+    <span class="hljs-keyword">return</span> sig, <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">verifySignature</span><span class="hljs-params">(pubKey *ecdsa.PublicKey, message <span class="hljs-type">string</span>, signature []<span class="hljs-type">byte</span>)</span></span> <span class="hljs-type">bool</span> {
+    <span class="hljs-keyword">const</span> keySize = <span class="hljs-number">32</span> <span class="hljs-comment">// For P-256 curve</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(signature) != keySize*<span class="hljs-number">2</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+    
+    hash := sha256.Sum256([]<span class="hljs-type">byte</span>(message))
+    r := <span class="hljs-built_in">new</span>(big.Int).SetBytes(signature[:keySize])
+    s := <span class="hljs-built_in">new</span>(big.Int).SetBytes(signature[keySize:])
+    
+    <span class="hljs-keyword">return</span> ecdsa.Verify(pubKey, hash[:], r, s)
+}
+</code></pre>
+<h3 id="c-rsa-with-openssl">C: RSA with OpenSSL</h3>
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/rsa.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/pem.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/err.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/evp.h&gt;</span></span>
+
+RSA* <span class="hljs-title function_">generate_rsa_keypair</span><span class="hljs-params">(<span class="hljs-type">int</span> key_length)</span> {
+    RSA *rsa = <span class="hljs-literal">NULL</span>;
+    BIGNUM *bne = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-type">int</span> ret = <span class="hljs-number">0</span>;
+    
+    <span class="hljs-comment">// Create new RSA key</span>
+    rsa = RSA_new();
+    <span class="hljs-keyword">if</span> (rsa == <span class="hljs-literal">NULL</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+    }
+    
+    <span class="hljs-comment">// Create BIGNUM with RSA_F4 (0x10001)</span>
+    bne = BN_new();
+    <span class="hljs-keyword">if</span> (bne == <span class="hljs-literal">NULL</span>) {
+        RSA_free(rsa);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+    }
+    
+    <span class="hljs-keyword">if</span> (BN_set_word(bne, RSA_F4) != <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">goto</span> cleanup;
+    }
+    
+    <span class="hljs-comment">// Generate the RSA key</span>
+    <span class="hljs-keyword">if</span> (RSA_generate_key_ex(rsa, key_length, bne, <span class="hljs-literal">NULL</span>) != <span class="hljs-number">1</span>) {
+        rsa = <span class="hljs-literal">NULL</span>; <span class="hljs-comment">// Set to NULL to indicate error</span>
+        <span class="hljs-keyword">goto</span> cleanup;
+    }
+    
+    ret = <span class="hljs-number">1</span>;
+    
+cleanup:
+    BN_free(bne);
+    <span class="hljs-keyword">if</span> (ret != <span class="hljs-number">1</span>) {
+        RSA_free(rsa);
+        rsa = <span class="hljs-literal">NULL</span>;
+    }
+    
+    <span class="hljs-keyword">return</span> rsa;
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">rsa_encrypt</span><span class="hljs-params">(RSA *rsa, <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *msg, <span class="hljs-type">size_t</span> msg_len,
+                <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> **encrypted, <span class="hljs-type">size_t</span> *encrypted_len)</span> {
+    <span class="hljs-type">int</span> rsa_size = RSA_size(rsa);
+    
+    <span class="hljs-comment">// Allocate memory for encrypted data</span>
+    *encrypted = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)OPENSSL_malloc(rsa_size);
+    <span class="hljs-keyword">if</span> (*encrypted == <span class="hljs-literal">NULL</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    
+    <span class="hljs-comment">// Encrypt the data</span>
+    *encrypted_len = RSA_public_encrypt(
+        (<span class="hljs-type">int</span>)msg_len, msg, *encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
+    
+    <span class="hljs-keyword">if</span> (*encrypted_len == <span class="hljs-number">-1</span>) {
+        OPENSSL_free(*encrypted);
+        *encrypted = <span class="hljs-literal">NULL</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">rsa_cleanup</span><span class="hljs-params">(RSA *rsa)</span> {
+    <span class="hljs-keyword">if</span> (rsa != <span class="hljs-literal">NULL</span>) {
+        RSA_free(rsa);
+    }
+}
+</code></pre>
+<h3 id="rust-ed25519-signatures">Rust: Ed25519 Signatures</h3>
+<pre><code class="language-rust"><span class="hljs-keyword">use</span> ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer, Verifier};
+<span class="hljs-keyword">use</span> rand::rngs::OsRng;
+<span class="hljs-keyword">use</span> std::convert::TryInto;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">generate_keypair</span>() <span class="hljs-punctuation">-&gt;</span> (SigningKey, VerifyingKey) {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">csprng</span> = OsRng;
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">signing_key</span> = SigningKey::<span class="hljs-title function_ invoke__">generate</span>(&amp;<span class="hljs-keyword">mut</span> csprng);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">verifying_key</span> = signing_key.<span class="hljs-title function_ invoke__">verifying_key</span>();
+    (signing_key, verifying_key)
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">sign_message</span>(signing_key: &amp;SigningKey, message: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> Signature {
+    signing_key.<span class="hljs-title function_ invoke__">sign</span>(message)
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">verify_signature</span>(verifying_key: &amp;VerifyingKey, message: &amp;[<span class="hljs-type">u8</span>], signature: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">sig</span> = <span class="hljs-keyword">match</span> Signature::<span class="hljs-title function_ invoke__">from_slice</span>(signature) {
+        <span class="hljs-title function_ invoke__">Ok</span>(sig) =&gt; sig,
+        <span class="hljs-title function_ invoke__">Err</span>(_) =&gt; <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>,
+    };
+    
+    verifying_key.<span class="hljs-title function_ invoke__">verify</span>(message, &amp;sig).<span class="hljs-title function_ invoke__">is_ok</span>()
+}
+
+<span class="hljs-comment">// Example usage</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-comment">// Generate keypair</span>
+    <span class="hljs-keyword">let</span> (signing_key, verifying_key) = <span class="hljs-title function_ invoke__">generate_keypair</span>();
+    
+    <span class="hljs-comment">// Sign a message</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">b&quot;This is a test message&quot;</span>;
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">signature</span> = <span class="hljs-title function_ invoke__">sign_message</span>(&amp;signing_key, message);
+    
+    <span class="hljs-comment">// Verify the signature</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">is_valid</span> = <span class="hljs-title function_ invoke__">verify_signature</span>(
+        &amp;verifying_key,
+        message,
+        &amp;signature.<span class="hljs-title function_ invoke__">to_bytes</span>()
+    );
+    
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Signature is valid: {}&quot;</span>, is_valid);
+}
+</code></pre>
+<h2 id="key-management">Key Management</h2>
+<h3 id="public-key-infrastructure-pki">Public Key Infrastructure (PKI)</h3>
+<ul>
+<li><strong>Certificate Authorities (CAs)</strong>: Issue and verify digital certificates</li>
+<li><strong>Certificate Revocation</strong>: CRLs and OCSP for checking revoked certificates</li>
+<li><strong>Certificate Formats</strong>: X.509, PEM, DER, PKCS#12</li>
+<li><strong>Trust Stores</strong>: Built-in to operating systems and browsers</li>
+</ul>
+<h3 id="key-storage-best-practices">Key Storage Best Practices</h3>
+<ol>
+<li><strong>HSMs</strong>: Use Hardware Security Modules for high-security applications</li>
+<li><strong>Key Derivation</strong>: Use PBKDF2, Argon2, or scrypt for password-based keys</li>
+<li><strong>Key Rotation</strong>: Regularly rotate keys and update certificates</li>
+<li><strong>Key Backup</strong>: Securely backup private keys with strong encryption</li>
+</ol>
+<h2 id="security-considerations">Security Considerations</h2>
+<h3 id="common-attacks">Common Attacks</h3>
+<ul>
+<li><strong>Side-channel attacks</strong>: Timing, power analysis, EM radiation</li>
+<li><strong>Implementation flaws</strong>: Poor random number generation, padding oracle</li>
+<li><strong>Algorithm weaknesses</strong>: Weak parameters, small subgroup attacks</li>
+<li><strong>Quantum threats</strong>: Shor’s algorithm can break RSA and ECC</li>
+</ul>
+<h3 id="recommended-key-sizes">Recommended Key Sizes</h3>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Security Level (bits)</th>
+<th>Key Size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RSA</td>
+<td>128</td>
+<td>3072</td>
+</tr>
+<tr>
+<td>ECC</td>
+<td>128</td>
+<td>256</td>
+</tr>
+<tr>
+<td>Ed25519</td>
+<td>128</td>
+<td>256</td>
+</tr>
+<tr>
+<td>RSA</td>
+<td>256</td>
+<td>15360</td>
+</tr>
+<tr>
+<td>ECC</td>
+<td>256</td>
+<td>512</td>
+</tr>
+</tbody></table>
+<h2 id="post-quantum-cryptography">Post-Quantum Cryptography</h2>
+<p>Post-quantum cryptography (PQC) refers to cryptographic algorithms that are thought to be secure against an attack by a quantum computer. These algorithms are being standardized by NIST as part of their Post-Quantum Cryptography Standardization project.</p>
+<h3 id="lattice-based-cryptography">Lattice-based Cryptography</h3>
+<p>Lattice-based cryptography is based on the hardness of lattice problems, which are believed to be resistant to quantum attacks.</p>
+<h4 id="kyber-key-encapsulation-mechanism">Kyber (Key Encapsulation Mechanism)</h4>
+<ul>
+<li><strong>Type</strong>: Key Encapsulation Mechanism (KEM)</li>
+<li><strong>Security</strong>: IND-CCA2 secure</li>
+<li><strong>Use Case</strong>: Key exchange in TLS 1.3</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># Example using Pycryptodome&#x27;s PQC implementation</span>
+<span class="hljs-keyword">from</span> Crypto.PublicKey <span class="hljs-keyword">import</span> Kyber
+
+<span class="hljs-comment"># Generate keypair</span>
+private_key = Kyber.generate(<span class="hljs-number">512</span>)
+public_key = private_key.public_key()
+
+<span class="hljs-comment"># Encapsulate a shared secret</span>
+ciphertext, shared_secret = public_key.encrypt()
+
+<span class="hljs-comment"># Decapsulate the shared secret</span>
+decrypted_secret = private_key.decrypt(ciphertext)
+<span class="hljs-keyword">assert</span> shared_secret == decrypted_secret
+</code></pre>
+<h4 id="dilithium-digital-signature">Dilithium (Digital Signature)</h4>
+<ul>
+<li><strong>Type</strong>: Digital Signature Algorithm</li>
+<li><strong>Security</strong>: EUF-CMA secure</li>
+<li><strong>Use Case</strong>: Digital signatures in secure boot, code signing</li>
+</ul>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;fmt&quot;</span>
+    <span class="hljs-string">&quot;github.com/cloudflare/circl/sign/dilithium&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+    <span class="hljs-comment">// Select security level (Dilithium2, Dilithium3, or Dilithium5)</span>
+    mode := dilithium.Mode3
+    
+    <span class="hljs-comment">// Generate keypair</span>
+    publicKey, privateKey, _ := mode.GenerateKey(rand.Reader)
+    
+    <span class="hljs-comment">// Sign a message</span>
+    message := []<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;Sign this message&quot;</span>)
+    signature := mode.Sign(privateKey, message)
+    
+    <span class="hljs-comment">// Verify signature</span>
+    <span class="hljs-keyword">if</span> mode.Verify(publicKey, message, signature) {
+        fmt.Println(<span class="hljs-string">&quot;Signature is valid&quot;</span>)
+    }
+}
+</code></pre>
+<h3 id="hash-based-cryptography">Hash-based Cryptography</h3>
+<p>Hash-based signatures are based on the security of cryptographic hash functions.</p>
+<h4 id="sphincs">SPHINCS+</h4>
+<ul>
+<li><strong>Type</strong>: Stateless hash-based signature scheme</li>
+<li><strong>Security</strong>: EUF-CMA secure</li>
+<li><strong>Use Case</strong>: Long-term signatures where state management is difficult</li>
+</ul>
+<pre><code class="language-rust"><span class="hljs-keyword">use</span> sphincsplus_rust::{
+    keypair, sign, verify,
+    params::SphincsPlusParams,
+    key::SphincsPublicKey,
+};
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-comment">// Initialize with recommended parameters</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">params</span> = SphincsPlusParams::<span class="hljs-title function_ invoke__">sphincssha256256frobust</span>();
+    
+    <span class="hljs-comment">// Generate keypair</span>
+    <span class="hljs-keyword">let</span> (pk, sk) = <span class="hljs-title function_ invoke__">keypair</span>(¶ms);
+    
+    <span class="hljs-comment">// Sign message</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">b&quot;Sign this message with SPHINCS+&quot;</span>;
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">signature</span> = <span class="hljs-title function_ invoke__">sign</span>(¶ms, &amp;sk, message);
+    
+    <span class="hljs-comment">// Verify signature</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">is_valid</span> = <span class="hljs-title function_ invoke__">verify</span>(¶ms, &amp;pk, message, &amp;signature);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Signature valid: {}&quot;</span>, is_valid);
+}
+</code></pre>
+<h3 id="code-based-cryptography">Code-based Cryptography</h3>
+<p>Based on the hardness of decoding random linear codes.</p>
+<h4 id="classic-mceliece">Classic McEliece</h4>
+<ul>
+<li><strong>Type</strong>: Key Encapsulation Mechanism</li>
+<li><strong>Security</strong>: IND-CCA2 secure</li>
+<li><strong>Use Case</strong>: Long-term secure key exchange</li>
+</ul>
+<h3 id="multivariate-cryptography">Multivariate Cryptography</h3>
+<p>Based on the difficulty of solving systems of multivariate quadratic equations.</p>
+<h3 id="isogeny-based-cryptography">Isogeny-based Cryptography</h3>
+<p>Based on the difficulty of finding isogenies between elliptic curves.</p>
+<h2 id="migration-to-post-quantum-cryptography">Migration to Post-Quantum Cryptography</h2>
+<h3 id="hybrid-schemes">Hybrid Schemes</h3>
+<p>Combining classical and post-quantum algorithms provides security against both classical and quantum adversaries.</p>
+<pre><code class="language-python"><span class="hljs-comment"># Hybrid key exchange example (EC + Kyber)</span>
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="hljs-keyword">import</span> ec
+<span class="hljs-keyword">from</span> Crypto.PublicKey <span class="hljs-keyword">import</span> Kyber
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hybrid_key_exchange</span>():
+    <span class="hljs-comment"># Classical ECDH</span>
+    private_key_ec = ec.generate_private_key(ec.SECP384R1())
+    public_key_ec = private_key_ec.public_key()
+    
+    <span class="hljs-comment"># Post-quantum Kyber</span>
+    private_key_kyber = Kyber.generate(<span class="hljs-number">512</span>)
+    public_key_kyber = private_key_kyber.public_key()
+    
+    <span class="hljs-comment"># Both parties perform similar operations</span>
+    <span class="hljs-comment"># ...</span>
+    
+    <span class="hljs-comment"># Combine both shared secrets</span>
+    <span class="hljs-comment"># shared_secret = KDF(ec_shared_secret | kyber_shared_secret)</span>
+    <span class="hljs-keyword">return</span> combined_secret
+</code></pre>
+<h3 id="implementation-considerations-1">Implementation Considerations</h3>
+<ol>
+<li><strong>Performance</strong>: PQC algorithms are generally slower and require more memory</li>
+<li><strong>Key and signature sizes</strong>: Typically larger than classical algorithms</li>
+<li><strong>Standardization</strong>: Follow NIST PQC standards for algorithm selection</li>
+<li><strong>Hybrid approach</strong>: Combine with classical cryptography during transition</li>
+</ol>
+<h3 id="nist-pqc-standardization-status-as-of-2023">NIST PQC Standardization Status (as of 2023)</h3>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Type</th>
+<th>Status</th>
+<th>Key Size</th>
+<th>Signature Size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kyber</td>
+<td>KEM</td>
+<td>Standardized</td>
+<td>800 B</td>
+<td>768 B</td>
+</tr>
+<tr>
+<td>Dilithium</td>
+<td>Signature</td>
+<td>Standardized</td>
+<td>1.3 KB</td>
+<td>2.5 KB</td>
+</tr>
+<tr>
+<td>Falcon</td>
+<td>Signature</td>
+<td>Standardized</td>
+<td>1.3 KB</td>
+<td>666 B</td>
+</tr>
+<tr>
+<td>SPHINCS+</td>
+<td>Signature</td>
+<td>Standardized</td>
+<td>1 KB</td>
+<td>17 KB</td>
+</tr>
+<tr>
+<td>Classic McEliece</td>
+<td>KEM</td>
+<td>Round 4</td>
+<td>261 KB</td>
+<td>N/A</td>
+</tr>
+</tbody></table>
+<h3 id="resources">Resources</h3>
+<ul>
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST PQC Project</a></li>
+<li><a href="https://openquantumsafe.org/">Open Quantum Safe</a></li>
+<li><a href="https://blog.cloudflare.com/post-quantum-crypto/">Cloudflare’s PQC Implementation</a></li>
+</ul>
+<h2 id="quantum-key-distribution-qkd">Quantum Key Distribution (QKD)</h2>
+<p>While not strictly post-quantum cryptography, QKD provides information-theoretic secure key exchange based on quantum mechanics principles.</p>
+<h3 id="bb84-protocol">BB84 Protocol</h3>
+<pre><code class="language-python"><span class="hljs-comment"># Simplified BB84 QKD simulation</span>
+<span class="hljs-keyword">import</span> random
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">bb84_protocol</span>(<span class="hljs-params">length=<span class="hljs-number">256</span></span>):
+    <span class="hljs-comment"># Alice generates random bits and bases</span>
+    alice_bits = [random.randint(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(length)]
+    alice_bases = [random.choice([<span class="hljs-string">&#x27;+&#x27;</span>, <span class="hljs-string">&#x27;×&#x27;</span>]) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(length)]
+    
+    <span class="hljs-comment"># Quantum channel simulation (omitted in this example)</span>
+    <span class="hljs-comment"># Eve could be listening...</span>
+    
+    <span class="hljs-comment"># Bob measures in random bases</span>
+    bob_bases = [random.choice([<span class="hljs-string">&#x27;+&#x27;</span>, <span class="hljs-string">&#x27;×&#x27;</span>]) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(length)]
+    bob_bits = []
+    
+    <span class="hljs-comment"># Compare bases and keep matching measurements</span>
+    sifted_key = []
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(length):
+        <span class="hljs-keyword">if</span> alice_bases[i] == bob_bases[i]:
+            sifted_key.append(alice_bits[i])
+    
+    <span class="hljs-keyword">return</span> sifted_key
+</code></pre>
+<h2 id="zero-knowledge-proofs">Zero-Knowledge Proofs</h2>
+<p>Zero-knowledge proofs (ZKPs) allow one party (the prover) to prove to another party (the verifier) that a statement is true without revealing any information beyond the validity of the statement itself.</p>
+<h3 id="properties-of-zero-knowledge-proofs">Properties of Zero-Knowledge Proofs</h3>
+<ol>
+<li><strong>Completeness</strong>: If the statement is true, the honest verifier will be convinced by an honest prover.</li>
+<li><strong>Soundness</strong>: If the statement is false, no cheating prover can convince the honest verifier.</li>
+<li><strong>Zero-knowledge</strong>: If the statement is true, the verifier learns nothing other than the fact that the statement is true.</li>
+</ol>
+<h3 id="types-of-zero-knowledge-proofs">Types of Zero-Knowledge Proofs</h3>
+<ol>
+<li><strong>Interactive ZKPs</strong>: Require multiple rounds of communication between prover and verifier.</li>
+<li><strong>Non-interactive ZKPs (NIZK)</strong>: Require only one message from prover to verifier.</li>
+<li><strong>zk-SNARKs</strong>: Succinct Non-interactive ARguments of Knowledge.</li>
+<li><strong>zk-STARKs</strong>: Scalable Transparent ARguments of Knowledge.</li>
+</ol>
+<h3 id="example-schnorrs-identification-protocol-interactive-zkp">Example: Schnorr’s Identification Protocol (Interactive ZKP)</h3>
+<pre><code class="language-python"><span class="hljs-comment"># Simplified Schnorr identification protocol</span>
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">from</span> hashlib <span class="hljs-keyword">import</span> sha256
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">schnorr_identification</span>():
+    <span class="hljs-comment"># Public parameters (known to both parties)</span>
+    p = <span class="hljs-number">23</span>  <span class="hljs-comment"># Prime modulus</span>
+    g = <span class="hljs-number">5</span>   <span class="hljs-comment"># Generator</span>
+    
+    <span class="hljs-comment"># Prover&#x27;s secret key</span>
+    x = <span class="hljs-number">6</span>   <span class="hljs-comment"># Private key (normally kept secret)</span>
+    y = (g ** x) % p  <span class="hljs-comment"># Public key</span>
+    
+    <span class="hljs-comment"># Prover generates a random value</span>
+    k = random.randint(<span class="hljs-number">1</span>, p-<span class="hljs-number">2</span>)
+    r = (g ** k) % p
+    
+    <span class="hljs-comment"># Verifier sends a challenge</span>
+    c = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">100</span>)
+    
+    <span class="hljs-comment"># Prover computes the response</span>
+    s = (k - c * x) % (p-<span class="hljs-number">1</span>)
+    
+    <span class="hljs-comment"># Verifier checks the proof</span>
+    lhs = (g ** s) * (y ** c) % p
+    rhs = r
+    
+    <span class="hljs-keyword">return</span> lhs == rhs
+</code></pre>
+<h3 id="zk-snark-example-using-zokrates">zk-SNARK Example using ZoKrates</h3>
+<pre><code class="language-javascript"><span class="hljs-comment">// Example: Proving knowledge of a hash preimage</span>
+<span class="hljs-comment">// In file `preimage.zok`</span>
+
+def <span class="hljs-title function_">main</span>(private field preimage, field hash) -&gt; bool {
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">sha256</span>(preimage) == hash;
+}
+
+<span class="hljs-comment">// Compile and setup</span>
+<span class="hljs-comment">// $ zokrates compile -i preimage.zok</span>
+<span class="hljs-comment">// $ zokrates setup</span>
+
+<span class="hljs-comment">// Generate proof</span>
+<span class="hljs-comment">// $ zokrates compute-witness -a &lt;preimage&gt; &lt;hash&gt;</span>
+<span class="hljs-comment">// $ zokrates generate-proof</span>
+</code></pre>
+<h3 id="applications-of-zero-knowledge-proofs">Applications of Zero-Knowledge Proofs</h3>
+<ol>
+<li><strong>Privacy-Preserving Transactions</strong>: Zcash uses zk-SNARKs for private transactions.</li>
+<li><strong>Authentication</strong>: Password authentication without revealing the password.</li>
+<li><strong>Blockchain Scaling</strong>: Rollups use ZKPs to prove transaction validity.</li>
+<li><strong>Voting Systems</strong>: Verify vote validity without revealing individual votes.</li>
+<li><strong>Identity Verification</strong>: Prove attributes (e.g., age &gt; 18) without revealing exact age.</li>
+</ol>
+<h3 id="performance-comparison">Performance Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>RSA-3072</th>
+<th>ECDSA-256</th>
+<th>Ed25519</th>
+<th>zk-SNARK (Groth16)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Key Generation</td>
+<td>100 ms</td>
+<td>1 ms</td>
+<td>0.1 ms</td>
+<td>10-60 s</td>
+</tr>
+<tr>
+<td>Proof Generation</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>100-500 ms</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>0.3 ms</td>
+<td>2 ms</td>
+<td>1 ms</td>
+<td>5-20 ms</td>
+</tr>
+<tr>
+<td>Proof Size</td>
+<td>384 B</td>
+<td>64 B</td>
+<td>64 B</td>
+<td>128-200 B</td>
+</tr>
+<tr>
+<td>Setup Trusted?</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h3 id="zk-starks-vs-zk-snarks">zk-STARKs vs zk-SNARKs</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>zk-SNARKs</th>
+<th>zk-STARKs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Setup Trusted</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Quantum Resistant</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Proof Size</td>
+<td>~200 B</td>
+<td>~100 KB</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>Fast</td>
+<td>Faster</td>
+</tr>
+<tr>
+<td>Proving Time</td>
+<td>Fast</td>
+<td>Slower</td>
+</tr>
+</tbody></table>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://z.cash/technology/zksnarks/">Zcash’s Explainer on zk-SNARKs</a></li>
+<li><a href="https://starkware.co/stark/">StarkWare’s zk-STARKs</a></li>
+<li><a href="https://zokrates.github.io/">ZoKrates Documentation</a></li>
+</ul>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Always use established libraries</strong>: Don’t implement crypto yourself</li>
+<li><strong>Keep software updated</strong>: Security patches are critical</li>
+<li><strong>Use appropriate key sizes</strong>: Follow current recommendations</li>
+<li><strong>Secure key storage</strong>: Protect private keys at rest and in use</li>
+<li><strong>Consider post-quantum</strong>: Plan for quantum-resistant algorithms</li>
+</ol>
+<h2 id="further-reading-1">Further Reading</h2>
+<ul>
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST Post-Quantum Cryptography Project</a></li>
+<li><a href="https://tools.ietf.org/html/rfc8032">RFC 8032: Edwards-Curve Digital Signature Algorithm (EdDSA)</a></li>
+<li><a href="http://www.secg.org/sec1-v2.pdf">SEC 1: Elliptic Curve Cryptography</a></li>
+<li><a href="https://csrc.nist.gov/publications/detail/fips/186/5/final">FIPS 186-5: Digital Signature Standard (DSS)</a></li>
+</ul>
+
+    </div>
+  </main>
+
+  <footer class="bg-dark-footer text-white-footer text-center py-3 mt-5">
+    <div class="card-header bg-dark-footer">
+      <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

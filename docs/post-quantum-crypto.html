@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>post-quantum-crypto - Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-lock me-2"></i>
+        <span>Cryptography Workshop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book me-1"></i> Modules
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+              <li>
+                <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+              </li>
+              <li><a class="dropdown-item" href="symmetric-crypto.html">
+                <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="public-key-crypto.html">
+                <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="hash-functions.html">
+                <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+              </li>
+              <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <div class="input-group">
+            <input class="form-control bg-dark text-white border-secondary" type="search" 
+                   placeholder="Search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="markdown-body">
+      <h1 id="post-quantum-cryptography">Post-Quantum Cryptography</h1>
+<p>Post-Quantum Cryptography (PQC) refers to cryptographic algorithms that are secure against attacks by both classical and quantum computers. This document covers the major families of post-quantum cryptographic algorithms and their implementations.</p>
+<h2 id="lattice-based-cryptography">Lattice-Based Cryptography</h2>
+<h3 id="learning-with-errors-lwe">Learning With Errors (LWE)</h3>
+<ul>
+<li><strong>Security</strong>: Based on the hardness of solving noisy linear equations</li>
+<li><strong>Parameters</strong>:<ul>
+<li>Dimension (n): 512-1024</li>
+<li>Modulus (q): 2^23-2^32</li>
+<li>Error distribution: Discrete Gaussian</li>
+</ul>
+</li>
+</ul>
+<h4 id="python-implementation-lwe-encryption">Python Implementation (LWE Encryption)</h4>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives <span class="hljs-keyword">import</span> hashes
+<span class="hljs-keyword">from</span> cryptography.hazmat.primitives.kdf.hkdf <span class="hljs-keyword">import</span> HKDF
+<span class="hljs-keyword">import</span> secrets
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">LWE</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, n=<span class="hljs-number">512</span>, q=<span class="hljs-number">2</span>**<span class="hljs-number">32</span>-<span class="hljs-number">1</span></span>):
+        <span class="hljs-variable language_">self</span>.n = n  <span class="hljs-comment"># Dimension</span>
+        <span class="hljs-variable language_">self</span>.q = q  <span class="hljs-comment"># Modulus</span>
+        
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">keygen</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># Generate secret key (small coefficients)</span>
+        s = np.random.randint(-<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, size=<span class="hljs-variable language_">self</span>.n)
+        <span class="hljs-comment"># Generate public key (A, b = A*s + e)</span>
+        A = np.random.randint(<span class="hljs-number">0</span>, <span class="hljs-variable language_">self</span>.q, size=(<span class="hljs-variable language_">self</span>.n, <span class="hljs-variable language_">self</span>.n))
+        e = np.random.normal(<span class="hljs-number">0</span>, <span class="hljs-number">3.2</span>, size=<span class="hljs-variable language_">self</span>.n).astype(<span class="hljs-built_in">int</span>)
+        b = (A @ s + e) % <span class="hljs-variable language_">self</span>.q
+        <span class="hljs-keyword">return</span> (A, b), s
+    
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encrypt</span>(<span class="hljs-params">self, pk, m</span>):
+        A, b = pk
+        r = np.random.randint(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>, size=<span class="hljs-variable language_">self</span>.n)
+        u = (A.T @ r) % <span class="hljs-variable language_">self</span>.q
+        v = (b @ r + m * (<span class="hljs-variable language_">self</span>.q // <span class="hljs-number">2</span>)) % <span class="hljs-variable language_">self</span>.q
+        <span class="hljs-keyword">return</span> (u, v)
+    
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decrypt</span>(<span class="hljs-params">self, s, ct</span>):
+        u, v = ct
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> (v - s @ u) % <span class="hljs-variable language_">self</span>.q &lt; <span class="hljs-variable language_">self</span>.q // <span class="hljs-number">2</span> <span class="hljs-keyword">else</span> <span class="hljs-number">1</span>
+</code></pre>
+<h3 id="ntru-n-th-degree-truncated-polynomial-ring">NTRU (N-th Degree Truncated Polynomial Ring)</h3>
+<ul>
+<li><strong>Security</strong>: Based on the shortest vector problem in a lattice</li>
+<li><strong>Parameters</strong>:<ul>
+<li>N: 509-1277 (polynomial degree)</li>
+<li>q: 2048-12289 (modulus)</li>
+</ul>
+</li>
+</ul>
+<h2 id="hash-based-cryptography">Hash-Based Cryptography</h2>
+<h3 id="sphincs">SPHINCS+</h3>
+<ul>
+<li><strong>Type</strong>: Stateless hash-based signature scheme</li>
+<li><strong>Security</strong>: Based on hash function security</li>
+<li><strong>Parameters</strong>:<ul>
+<li>Hash function: SHA-256, SHAKE-256, or Haraka</li>
+<li>Signature size: 8-41 KB</li>
+</ul>
+</li>
+</ul>
+<h4 id="go-implementation-sphincs-signature">Go Implementation (SPHINCS+ Signature)</h4>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;fmt&quot;</span>
+    <span class="hljs-string">&quot;github.com/cloudflare/circl/sign/sphincsplus&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+    <span class="hljs-comment">// Select security level (128, 192, or 256 bits)</span>
+    mode := sphincsplus.SHAKE256s
+    
+    <span class="hljs-comment">// Generate key pair</span>
+    publicKey, privateKey, err := sphincsplus.GenerateKey(rand.Reader, mode)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-built_in">panic</span>(err)
+    }
+    
+    <span class="hljs-comment">// Sign message</span>
+    message := []<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;Sign this message with SPHINCS+&quot;</span>)
+    signature := sphincsplus.Sign(privateKey, message)
+    
+    <span class="hljs-comment">// Verify signature</span>
+    valid := sphincsplus.Verify(publicKey, message, signature)
+    fmt.Printf(<span class="hljs-string">&quot;Signature valid: %v\n&quot;</span>, valid)
+}
+</code></pre>
+<h2 id="code-based-cryptography">Code-Based Cryptography</h2>
+<h3 id="classic-mceliece">Classic McEliece</h3>
+<ul>
+<li><strong>Security</strong>: Based on decoding random linear codes</li>
+<li><strong>Parameters</strong>:<ul>
+<li>n: 3488-8192 (code length)</li>
+<li>k: 2720-6528 (dimension)</li>
+<li>t: 64-128 (error correction capability)</li>
+</ul>
+</li>
+</ul>
+<h2 id="multivariate-cryptography">Multivariate Cryptography</h2>
+<h3 id="rainbow-signature-scheme">Rainbow Signature Scheme</h3>
+<ul>
+<li><strong>Security</strong>: Based on solving systems of multivariate quadratic equations</li>
+<li><strong>Parameters</strong>:<ul>
+<li>v1: Number of vinegar variables in first layer</li>
+<li>o1, o2: Number of oil variables in each layer</li>
+<li>q: Finite field size (typically 256)</li>
+</ul>
+</li>
+</ul>
+<h2 id="isogeny-based-cryptography">Isogeny-Based Cryptography</h2>
+<h3 id="sike-supersingular-isogeny-key-encapsulation">SIKE (Supersingular Isogeny Key Encapsulation)</h3>
+<ul>
+<li><strong>Security</strong>: Based on computing isogenies between supersingular elliptic curves</li>
+<li><strong>Parameters</strong>:<ul>
+<li>p: Large prime of form 2^a * 3^b * f - 1</li>
+<li>l1, l2: Small primes (typically 2 and 3)</li>
+</ul>
+</li>
+</ul>
+<h2 id="implementation-challenges">Implementation Challenges</h2>
+<h3 id="1-lwe-parameter-selection">1. LWE Parameter Selection</h3>
+<ul>
+<li><strong>Task</strong>: Implement parameter selection for LWE-based schemes</li>
+<li><strong>Challenge</strong>: Balance security and performance</li>
+<li><strong>Target</strong>: 128-bit post-quantum security</li>
+</ul>
+<h3 id="2-ntru-key-generation">2. NTRU Key Generation</h3>
+<ul>
+<li><strong>Task</strong>: Implement NTRU key generation with protection against key recovery attacks</li>
+<li><strong>Challenge</strong>: Ensure proper parameter selection to prevent lattice reduction attacks</li>
+</ul>
+<h3 id="3-sphincs-optimization">3. SPHINCS+ Optimization</h3>
+<ul>
+<li><strong>Task</strong>: Optimize SPHINCS+ for embedded systems</li>
+<li><strong>Challenge</strong>: Reduce signature size while maintaining security</li>
+</ul>
+<h2 id="migration-to-post-quantum-cryptography">Migration to Post-Quantum Cryptography</h2>
+<h3 id="hybrid-schemes">Hybrid Schemes</h3>
+<ul>
+<li><strong>Approach</strong>: Combine classical and post-quantum algorithms</li>
+<li><strong>Example</strong>: ECDH + Kyber for key exchange</li>
+<li><strong>Benefits</strong>: Maintains security against both classical and quantum attacks</li>
+</ul>
+<h3 id="performance-considerations">Performance Considerations</h3>
+<ul>
+<li><strong>Key Sizes</strong>: Post-quantum keys are typically larger</li>
+<li><strong>Computational Overhead</strong>: Some PQC algorithms require more computation</li>
+<li><strong>Bandwidth</strong>: Larger keys and signatures increase communication overhead</li>
+</ul>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST Post-Quantum Cryptography Standardization</a></li>
+<li><a href="https://github.com/PQClean/PQClean">PQClean: Post-quantum cryptography software</a></li>
+<li><a href="https://github.com/open-quantum-safe/liboqs">liboqs: Open Quantum Safe library</a></li>
+<li><a href="https://tools.ietf.org/html/rfc8391">RFC 8391: XMSS: eXtended Merkle Signature Scheme</a></li>
+<li><a href="https://sphincs.org/">The SPHINCS+ Signature Framework</a></li>
+</ul>
+
+    </div>
+  </main>
+
+  <footer class="bg-dark-footer text-white-footer text-center py-3 mt-5">
+    <div class="card-header bg-dark-footer">
+      <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

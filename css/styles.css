@@ -1,0 +1,552 @@
+/* Main Styles */
+:root {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --primary-color: #4CAF50;
+    --primary-hover: #45a049;
+    --card-bg: #1e1e1e;
+    --card-hover: #2d2d2d;
+    --border-color: #333;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --code-bg: #2d2d2d;
+    --navbar-height: 60px;
+}
+
+/* Base Styles */
+html[data-bs-theme="dark"] {
+    color-scheme: dark;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    padding-top: 4rem;
+    transition: all 0.3s ease;
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1030; /* Above most content but below modals (1050) */
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* Guide Page Specific */
+.guide-section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Code Blocks */
+pre {
+    background: var(--code-bg);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+code {
+    background-color: var(--code-bg);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* Table of Contents */
+.toc {
+    position: sticky;
+    top: calc(var(--navbar-height) + 1rem); /* Position below navbar */
+    max-height: calc(100vh - var(--navbar-height) - 2rem);
+    overflow-y: auto;
+    z-index: 1020; /* Below navbar but above content */
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.toc h5 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.toc li {
+    margin: 0.25rem 0;
+}
+
+.toc a {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.toc a:hover {
+    background: var(--card-hover);
+    color: var(--primary-color);
+}
+
+/* Utility Classes */
+.bg-dark {
+    background-color: var(--bg-color) !important;
+}
+
+.text-white {
+    color: var(--text-color) !important;
+}
+
+.border-dark {
+    border-color: var(--border-color) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .toc {
+        position: static;
+        max-height: none;
+        margin-bottom: 2rem;
+    }
+}
+
+/* Ensure proper spacing for fixed navbar and TOC */
+body {
+    padding-top: calc(var(--navbar-height) + 1rem);
+    padding-bottom: 2rem;
+}
+
+/* Add scroll margin to account for fixed navbar when navigating to anchors */
+:target {
+    scroll-margin-top: calc(var(--navbar-height) + 1rem);
+}
+
+/* Ensure content doesn't shift when TOC becomes sticky */
+main {
+    position: relative;
+}
+
+/* Fix for dropdown menus in dark theme */
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--card-hover);
+    color: var(--primary-color);
+}
+
+.dropdown-divider {
+    border-color: var(--border-color);
+}
+
+/* Guide Sections */
+.guide-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+.difficulty-badge {
+    font-size: 0.8em;
+    padding: 0.3em 0.6em;
+    margin-right: 0.5em;
+}
+
+/* Table of Contents */
+.toc {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.toc a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem 0;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.toc a:hover, .toc a:focus {
+    color: var(--primary-color);
+    background-color: var(--card-hover);
+    padding-left: 1rem;
+}
+
+.toc ul {
+    list-style: none;
+    padding-left: 1rem;
+    margin: 0;
+}
+
+.toc > ul {
+    padding-left: 0;
+}
+
+/* Code Blocks */
+pre {
+    background: var(--code-bg);
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+}
+
+code {
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    background: var(--code-bg);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: #f8f9fa;
+}
+
+pre code {
+    padding: 0;
+    background: transparent;
+    font-size: 1em;
+}
+
+/* Check List */
+.checklist {
+    list-style: none;
+    padding-left: 0;
+}
+
+.checklist li:before {
+    content: "\2713 ";
+    color: #198754;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+/* Card Styles */
+.card {
+    transition: all 0.3s ease;
+    height: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px var(--shadow-color);
+    background-color: var(--card-hover);
+}
+
+.card-img-top {
+    height: 180px;
+    object-fit: cover;
+    background: var(--bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.card-body {
+    background-color: transparent;
+}
+
+.card-title, .card-text {
+    color: var(--text-color);
+}
+
+/* Jumbotron */
+.jumbotron {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2d7d32 100%);
+    color: white;
+    padding: 4rem 2rem;
+    margin: 1rem 0 3rem 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Boxes */
+.warning-box {
+    background: #332a00;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #ffecb3;
+    border-radius: 0 4px 4px 0;
+}
+
+.tip-box {
+    background: #001f29;
+    border-left: 4px solid #0dcaf0;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #b3ecff;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--card-bg) !important;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    height: var(--navbar-height);
+    padding: 0.5rem 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--text-color) !important;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Sections */
+section {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+section:last-child {
+    border-bottom: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-top: 1.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 2.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+h3 {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* Forms */
+.form-control {
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.75rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+    background-color: var(--card-hover);
+    color: var(--text-color);
+}
+
+/* Results */
+#caesar-result,
+#vigenere-result,
+#aes-result,
+#rsa-public,
+#rsa-encrypted,
+#rsa-decrypted {
+    font-family: 'Courier New', Courier, monospace;
+    word-break: break-all;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Challenge Cards */
+.list-group-item {
+    margin-bottom: 0.5rem;
+    border-radius: 4px !important;
+    border: 1px solid rgba(0,0,0,.125);
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* Footer */
+footer {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    background-color: #343a40;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    section {
+        padding: 1.5rem 0;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+section {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#challenges {
+    background-color: var(--card-bg);
+}
+
+.bg-dark-footer {
+    background-color: #212529 !important;
+}
+.text-white-footer {
+    color: #ffffff !important;
+}

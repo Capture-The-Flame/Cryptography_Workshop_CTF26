@@ -1,0 +1,17 @@
+{
+  "name": "cryptography-workshop",
+  "version": "1.0.0",
+  "description": "Advanced Cryptography Workshop with interactive examples",
+  "main": "convert.js",
+  "scripts": {
+    "convert": "node convert.js",
+    "start": "http-server docs -p 8080 -o"
+  },
+  "dependencies": {
+    "highlight.js": "^11.7.0",
+    "marked": "^4.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

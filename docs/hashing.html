@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hashing - Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-lock me-2"></i>
+        <span>Cryptography Workshop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book me-1"></i> Modules
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+              <li>
+                <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+              </li>
+              <li><a class="dropdown-item" href="symmetric-crypto.html">
+                <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="public-key-crypto.html">
+                <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="hash-functions.html">
+                <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+              </li>
+              <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <div class="input-group">
+            <input class="form-control bg-dark text-white border-secondary" type="search" 
+                   placeholder="Search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="markdown-body">
+      <h1 id="modern-hash-functions-and-password-security">Modern Hash Functions and Password Security</h1>
+<p>Cryptographic hash functions are essential building blocks in modern cryptography, providing data integrity verification, password storage, and message authentication. This section covers the latest developments in hash functions and secure password storage techniques.</p>
+<h2 id="evolution-of-hash-functions">Evolution of Hash Functions</h2>
+<h3 id="historical-context">Historical Context</h3>
+<ul>
+<li><strong>MD5 (1992)</strong>: 128-bit hash, completely broken (collisions found in seconds)</li>
+<li><strong>SHA-1 (1995)</strong>: 160-bit hash, considered insecure since 2017</li>
+<li><strong>SHA-2 Family (2001)</strong>: Includes SHA-256 and SHA-512, still widely used</li>
+<li><strong>SHA-3 (2015)</strong>: Latest NIST standard, based on Keccak algorithm</li>
+</ul>
+<h3 id="modern-hash-functions">Modern Hash Functions</h3>
+<h4 id="blake3">BLAKE3</h4>
+<ul>
+<li><strong>Design</strong>: Based on the BLAKE2 and Bao tree modes</li>
+<li><strong>Features</strong>:<ul>
+<li>Extremely fast (faster than MD5 on modern hardware)</li>
+<li>Parallelizable (scales with multiple cores)</li>
+<li>Supports keyed hashing and key derivation</li>
+<li>256-bit output by default (configurable)</li>
+<li>No known security vulnerabilities</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-rust"><span class="hljs-comment">// Example: Using BLAKE3 in Rust</span>
+<span class="hljs-keyword">use</span> blake3;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-comment">// Hash some input</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">hash</span> = blake3::<span class="hljs-title function_ invoke__">hash</span>(<span class="hljs-string">b&quot;hello world&quot;</span>);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;BLAKE3 hash: {}&quot;</span>, hash);
+    
+    <span class="hljs-comment">// Keyed hash</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">key</span> = [<span class="hljs-number">42u8</span>; <span class="hljs-number">32</span>];
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">hasher</span> = blake3::Hasher::<span class="hljs-title function_ invoke__">new_keyed</span>(&amp;key);
+    hasher.<span class="hljs-title function_ invoke__">update</span>(<span class="hljs-string">b&quot;authenticated data&quot;</span>);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = hasher.<span class="hljs-title function_ invoke__">finalize</span>();
+    
+    <span class="hljs-comment">// Key derivation</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">context</span> = <span class="hljs-string">&quot;my application context&quot;</span>;
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">derived_key</span> = blake3::<span class="hljs-title function_ invoke__">derive_key</span>(context, <span class="hljs-string">b&quot;input key material&quot;</span>);
+}
+</code></pre>
+<h4 id="sha-3-keccak">SHA-3 (Keccak)</h4>
+<ul>
+<li><strong>Design</strong>: Sponge construction</li>
+<li><strong>Variants</strong>:<ul>
+<li>SHA3-224, SHA3-256, SHA3-384, SHA3-512</li>
+<li>SHAKE128, SHAKE256 (extendable-output functions)</li>
+</ul>
+</li>
+<li><strong>Security Level</strong>: 112, 128, 192, or 256 bits</li>
+<li><strong>Performance</strong>: Slower than BLAKE3 but with strong security guarantees</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># Example: SHA-3 in Python</span>
+<span class="hljs-keyword">import</span> hashlib
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hash_sha3_256</span>(<span class="hljs-params">data: <span class="hljs-built_in">bytes</span></span>) -&gt; <span class="hljs-built_in">bytes</span>:
+    <span class="hljs-string">&quot;&quot;&quot;Generate SHA3-256 hash of data.&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> hashlib.sha3_256(data).digest()
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">shake256</span>(<span class="hljs-params">data: <span class="hljs-built_in">bytes</span>, length: <span class="hljs-built_in">int</span></span>) -&gt; <span class="hljs-built_in">bytes</span>:
+    <span class="hljs-string">&quot;&quot;&quot;Generate variable-length hash using SHAKE256.&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> hashlib.shake_256(data).digest(length)
+</code></pre>
+<h3 id="password-hashing">Password Hashing</h3>
+<h4 id="modern-password-hashing-algorithms">Modern Password Hashing Algorithms</h4>
+<ol>
+<li><strong>Argon2</strong> (2015 Password Hashing Competition Winner)<ul>
+<li><strong>Memory-hard</strong>: Resistant to GPU/ASIC attacks</li>
+<li><strong>Configurable</strong>: Time, memory, and parallelism parameters</li>
+<li><strong>Variants</strong>:<ul>
+<li>Argon2d: Maximizes resistance to GPU cracking</li>
+<li>Argon2i: Optimized to resist side-channel attacks</li>
+<li>Argon2id: Hybrid (default), combines both approaches</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-go"><span class="hljs-comment">// Example: Argon2 in Go</span>
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;golang.org/x/crypto/argon2&quot;</span>
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;encoding/base64&quot;</span>
+)
+
+<span class="hljs-keyword">type</span> params <span class="hljs-keyword">struct</span> {
+    memory      <span class="hljs-type">uint32</span>
+    iterations  <span class="hljs-type">uint32</span>
+    parallelism <span class="hljs-type">uint8</span>
+    saltLength  <span class="hljs-type">uint32</span>
+    keyLength   <span class="hljs-type">uint32</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">generateHash</span><span class="hljs-params">(password <span class="hljs-type">string</span>, p params)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) {
+    <span class="hljs-comment">// Generate random salt</span>
+    salt := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, p.saltLength)
+    <span class="hljs-keyword">if</span> _, err := rand.Read(salt); err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err
+    }
+    
+    <span class="hljs-comment">// Generate hash</span>
+    hash := argon2.IDKey(
+        []<span class="hljs-type">byte</span>(password),
+        salt,
+        p.iterations,
+        p.memory,
+        p.parallelism,
+        p.keyLength,
+    )
+    
+    <span class="hljs-comment">// Encode salt and hash</span>
+    b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+    b64Hash := base64.RawStdEncoding.EncodeToString(hash)
+    
+    <span class="hljs-comment">// Format: $argon2id$v=19$m=65536,t=3,p=2$salt$hash</span>
+    <span class="hljs-keyword">return</span> fmt.Sprintf(
+        <span class="hljs-string">&quot;$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s&quot;</span>,
+        p.memory,
+        p.iterations,
+        p.parallelism,
+        b64Salt,
+        b64Hash,
+    ), <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<ol start="2">
+<li><p><strong>bcrypt</strong></p>
+<ul>
+<li><strong>Design</strong>: Based on Blowfish cipher</li>
+<li><strong>Work Factor</strong>: Configurable to increase computation time</li>
+<li><strong>Output</strong>: 60-character string</li>
+<li><strong>Limitations</strong>: Maximum password length of 72 bytes</li>
+</ul>
+</li>
+<li><p><strong>scrypt</strong></p>
+<ul>
+<li><strong>Memory-hard</strong>: Designed to be memory-intensive</li>
+<li><strong>Parameters</strong>: N (CPU/memory cost), r (block size), p (parallelization)</li>
+<li><strong>Use Case</strong>: Key derivation, password hashing</li>
+</ul>
+</li>
+</ol>
+<h3 id="secure-password-storage-best-practices">Secure Password Storage Best Practices</h3>
+<ol>
+<li><p><strong>Never Store Plaintext Passwords</strong></p>
+<ul>
+<li>Always hash passwords before storage</li>
+<li>Use a strong, modern hashing algorithm (Argon2id recommended)</li>
+</ul>
+</li>
+<li><p><strong>Use a Unique Salt for Each Password</strong></p>
+<ul>
+<li>Generate a cryptographically secure random salt</li>
+<li>Minimum 16 bytes (128 bits) of entropy</li>
+<li>Store the salt alongside the hash</li>
+</ul>
+</li>
+<li><p><strong>Appropriate Work Factors</strong></p>
+<ul>
+<li>Argon2: memory ≥ 64MB, iterations ≥ 3, parallelism = number of cores</li>
+<li>bcrypt: work factor ≥ 12</li>
+<li>scrypt: N=2^20, r=8, p=1 (adjust based on hardware)</li>
+</ul>
+</li>
+<li><p><strong>Upgrade Legacy Hashes</strong></p>
+<ul>
+<li>Migrate from weak hashes (MD5, SHA-1) to modern algorithms</li>
+<li>Use a gradual upgrade path:<pre><code>if (isLegacyHash(storedHash)) {
+    if (verifyLegacyHash(inputPassword, storedHash)) {
+        <span class="hljs-comment">// Generate and store new hash</span>
+        <span class="hljs-built_in">storeNewHash</span>(createNewHash(inputPassword));
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="password-hashing-in-practice">Password Hashing in Practice</h3>
+<h4 id="password-policy-recommendations">Password Policy Recommendations</h4>
+<ul>
+<li>Minimum length: 12 characters</li>
+<li>Allow all printable characters</li>
+<li>No complexity requirements (NIST 800-63B)</li>
+<li>Implement rate limiting</li>
+<li>Use breach detection (Have I Been Pwned API)</li>
+<li>Offer two-factor authentication</li>
+</ul>
+<h4 id="common-vulnerabilities">Common Vulnerabilities</h4>
+<ol>
+<li><p><strong>Timing Attacks</strong></p>
+<ul>
+<li>Use constant-time comparison for password verification</li>
+<li>Example (Python):<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">verify_password</span>(<span class="hljs-params">stored_hash, input_password</span>):
+    <span class="hljs-keyword">return</span> secrets.compare_digest(
+        stored_hash,
+        calculate_hash(input_password)
+    )
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Hash Extension Attacks</strong></p>
+<ul>
+<li>Use HMAC or modern hash functions with proper padding</li>
+<li>Example: <code>HMAC(key, message)</code> instead of <code>hash(key + message)</code></li>
+</ul>
+</li>
+<li><p><strong>Side-Channel Leaks</strong></p>
+<ul>
+<li>Prevent timing, power analysis, and cache-timing attacks</li>
+<li>Use constant-time implementations</li>
+</ul>
+</li>
+</ol>
+<h3 id="performance-considerations">Performance Considerations</h3>
+<h4 id="benchmarks-hashes-per-second">Benchmarks (Hashes per Second)</h4>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>CPU (i9-9900K)</th>
+<th>GPU (RTX 3090)</th>
+<th>Memory Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MD5</td>
+<td>8.5 billion</td>
+<td>500 billion</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>1.2 billion</td>
+<td>150 billion</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>bcrypt</td>
+<td>15,000</td>
+<td>500</td>
+<td>4KB</td>
+</tr>
+<tr>
+<td>scrypt</td>
+<td>50</td>
+<td>5</td>
+<td>1GB+</td>
+</tr>
+<tr>
+<td>Argon2id</td>
+<td>10</td>
+<td>0.5</td>
+<td>1GB+</td>
+</tr>
+</tbody></table>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://pages.nist.gov/800-63-3/sp800-63b.html">NIST SP 800-63B: Digital Identity Guidelines</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">OWASP Password Storage Cheat Sheet</a></li>
+<li><a href="https://github.com/P-H-C/phc-winner-argon2/blob/master/argon2-specs.pdf">Argon2 Specification</a></li>
+<li><a href="https://github.com/BLAKE3-team/BLAKE3-specs/blob/master/blake3.pdf">BLAKE3 Paper</a></li>
+</ul>
+<h3 id="common-hash-functions">Common Hash Functions</h3>
+<ol>
+<li><p><strong>SHA-2 Family</strong></p>
+<ul>
+<li><strong>SHA-256</strong>: 256-bit hash, widely used in TLS/SSL, Bitcoin</li>
+<li><strong>SHA-384/512</strong>: Stronger variants for higher security requirements</li>
+<li><strong>Security Level</strong>: 128-256 bits of security</li>
+<li><strong>Performance</strong>: Fast on 64-bit processors, hardware-accelerated</li>
+</ul>
+</li>
+<li><p><strong>SHA-3 (Keccak)</strong></p>
+<ul>
+<li>Sponge construction (different from Merkle-Damgård in SHA-2)</li>
+<li>Variable output lengths (224, 256, 384, 512 bits)</li>
+<li>Chosen as NIST standard in 2015</li>
+<li>Resistant to length-extension attacks</li>
+</ul>
+</li>
+<li><p><strong>BLAKE2/3</strong></p>
+<ul>
+<li>Faster than MD5, SHA-1, SHA-2, and SHA-3</li>
+<li>Used in many applications including WireGuard VPN</li>
+<li>BLAKE3 is a recent improvement with parallel hashing</li>
+</ul>
+</li>
+<li><p><strong>Deprecated Hashes</strong></p>
+<ul>
+<li><strong>MD5</strong>: Completely broken, only for checksums</li>
+<li><strong>SHA-1</strong>: No longer secure, being phased out</li>
+<li><strong>SHA-0</strong>: Obsolete, never widely used</li>
+</ul>
+</li>
+</ol>
+<h2 id="implementation-examples">Implementation Examples</h2>
+<h3 id="python-sha-256-and-hmac">Python: SHA-256 and HMAC</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> hashlib
+<span class="hljs-keyword">import</span> hmac
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hash_sha256</span>(<span class="hljs-params">data: <span class="hljs-built_in">bytes</span></span>) -&gt; <span class="hljs-built_in">str</span>:
+    <span class="hljs-string">&quot;&quot;&quot;Generate SHA-256 hash of data.&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> hashlib.sha256(data).hexdigest()
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_hmac</span>(<span class="hljs-params">key: <span class="hljs-built_in">bytes</span>, message: <span class="hljs-built_in">bytes</span></span>) -&gt; <span class="hljs-built_in">bytes</span>:
+    <span class="hljs-string">&quot;&quot;&quot;Generate HMAC using SHA-256.&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> hmac.new(key, message, hashlib.sha256).digest()
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">hash_password</span>(<span class="hljs-params">password: <span class="hljs-built_in">str</span>, salt: <span class="hljs-built_in">bytes</span> = <span class="hljs-literal">None</span></span>) -&gt; <span class="hljs-built_in">tuple</span>[<span class="hljs-built_in">bytes</span>, <span class="hljs-built_in">bytes</span>]:
+    <span class="hljs-string">&quot;&quot;&quot;Hash password with salt using PBKDF2.&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">if</span> salt <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        salt = os.urandom(<span class="hljs-number">16</span>)  <span class="hljs-comment"># 128-bit salt</span>
+    key = hashlib.pbkdf2_hmac(
+        <span class="hljs-string">&#x27;sha256&#x27;</span>,
+        password.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>),
+        salt,
+        <span class="hljs-number">100000</span>,  <span class="hljs-comment"># Number of iterations</span>
+        dklen=<span class="hljs-number">32</span>  <span class="hljs-comment"># Output key length</span>
+    )
+    <span class="hljs-keyword">return</span> key, salt
+</code></pre>
+<h3 id="go-blake2b-and-argon2">Go: BLAKE2b and Argon2</h3>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;encoding/hex&quot;</span>
+    <span class="hljs-string">&quot;golang.org/x/crypto/argon2&quot;</span>
+    <span class="hljs-string">&quot;golang.org/x/crypto/blake2b&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">hashBlake2b</span><span class="hljs-params">(data []<span class="hljs-type">byte</span>)</span></span> <span class="hljs-type">string</span> {
+    hash := blake2b.Sum256(data)
+    <span class="hljs-keyword">return</span> hex.EncodeToString(hash[:])
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">hashPassword</span><span class="hljs-params">(password []<span class="hljs-type">byte</span>)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">string</span>, <span class="hljs-type">error</span>) {
+    <span class="hljs-comment">// Generate a random salt</span>
+    salt := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">16</span>)
+    <span class="hljs-keyword">if</span> _, err := rand.Read(salt); err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, err
+    }
+    
+    <span class="hljs-comment">// Argon2id parameters</span>
+    key := argon2.IDKey(
+        password, salt,
+        <span class="hljs-number">3</span>,          <span class="hljs-comment">// iterations</span>
+        <span class="hljs-number">64</span>*<span class="hljs-number">1024</span>,    <span class="hljs-comment">// 64MB memory</span>
+        <span class="hljs-number">4</span>,          <span class="hljs-comment">// 4 threads</span>
+        <span class="hljs-number">32</span>,         <span class="hljs-comment">// 32-byte key</span>
+    )
+    
+    <span class="hljs-keyword">return</span> hex.EncodeToString(key), hex.EncodeToString(salt), <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<h3 id="c-sha-3-with-openssl">C: SHA-3 with OpenSSL</h3>
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/evp.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/sha.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">sha3_256_hash</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *input, <span class="hljs-type">size_t</span> input_len, 
+                 <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *output, <span class="hljs-type">size_t</span> output_len)</span> {
+    EVP_MD_CTX *mdctx;
+    <span class="hljs-type">const</span> EVP_MD *md;
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> md_len;
+
+    <span class="hljs-keyword">if</span> (output_len &lt; SHA256_DIGEST_LENGTH)
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+    md = EVP_sha3_256();
+    mdctx = EVP_MD_CTX_new();
+    EVP_DigestInit_ex(mdctx, md, <span class="hljs-literal">NULL</span>);
+    EVP_DigestUpdate(mdctx, input, input_len);
+    EVP_DigestFinal_ex(mdctx, output, &amp;md_len);
+    EVP_MD_CTX_free(mdctx);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+}
+</code></pre>
+<h3 id="rust-blake3-and-hmac">Rust: BLAKE3 and HMAC</h3>
+<pre><code class="language-rust"><span class="hljs-keyword">use</span> blake3::Hasher;
+<span class="hljs-keyword">use</span> hmac::{Hmac, Mac, NewMac};
+<span class="hljs-keyword">use</span> sha2::Sha256;
+
+<span class="hljs-comment">// BLAKE3 hash function</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">blake3_hash</span>(input: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">String</span> {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">hasher</span> = Hasher::<span class="hljs-title function_ invoke__">new</span>();
+    hasher.<span class="hljs-title function_ invoke__">update</span>(input);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">hash</span> = hasher.<span class="hljs-title function_ invoke__">finalize</span>();
+    hash.<span class="hljs-title function_ invoke__">to_hex</span>().<span class="hljs-title function_ invoke__">to_string</span>()
+}
+
+<span class="hljs-comment">// HMAC-SHA256</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">hmac_sha256</span>(key: &amp;[<span class="hljs-type">u8</span>], message: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt; {
+    <span class="hljs-keyword">type</span> <span class="hljs-title class_">HmacSha256</span> = Hmac&lt;Sha256&gt;;
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">mac</span> = HmacSha256::<span class="hljs-title function_ invoke__">new_from_slice</span>(key).<span class="hljs-title function_ invoke__">expect</span>(<span class="hljs-string">&quot;HMAC can take key of any size&quot;</span>);
+    mac.<span class="hljs-title function_ invoke__">update</span>(message);
+    mac.<span class="hljs-title function_ invoke__">finalize</span>().<span class="hljs-title function_ invoke__">into_bytes</span>().<span class="hljs-title function_ invoke__">to_vec</span>()
+}
+</code></pre>
+<h2 id="password-hashing-1">Password Hashing</h2>
+<h3 id="best-practices">Best Practices</h3>
+<ol>
+<li><strong>Use dedicated functions</strong>: Argon2, bcrypt, or PBKDF2</li>
+<li><strong>Add unique salt</strong>: At least 16 random bytes per password</li>
+<li><strong>High work factor</strong>: Make it slow for attackers (100ms+ per hash)</li>
+<li><strong>Memory-hard functions</strong>: Resist GPU/ASIC attacks</li>
+</ol>
+<h3 id="algorithm-comparison">Algorithm Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Memory Usage</th>
+<th>Parallelism</th>
+<th>Recommended Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Argon2id</td>
+<td>Adjustable</td>
+<td>Yes</td>
+<td>General purpose</td>
+</tr>
+<tr>
+<td>bcrypt</td>
+<td>4KB</td>
+<td>No</td>
+<td>Legacy systems</td>
+</tr>
+<tr>
+<td>PBKDF2</td>
+<td>Low</td>
+<td>No</td>
+<td>FIPS compliance</td>
+</tr>
+<tr>
+<td>scrypt</td>
+<td>Adjustable</td>
+<td>Limited</td>
+<td>Cryptocurrencies</td>
+</tr>
+</tbody></table>
+<h2 id="security-considerations">Security Considerations</h2>
+<h3 id="common-attacks">Common Attacks</h3>
+<ol>
+<li><strong>Rainbow Tables</strong>: Prevented by using unique salts</li>
+<li><strong>Brute Force</strong>: Mitigated by slow hash functions</li>
+<li><strong>Timing Attacks</strong>: Use constant-time comparison</li>
+<li><strong>Length Extension</strong>: Affects some hash functions (not SHA-3)</li>
+</ol>
+<h3 id="performance-benchmarks">Performance Benchmarks</h3>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Speed (MB/s)</th>
+<th>Security Level</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SHA-256</td>
+<td>400-600</td>
+<td>128-bit</td>
+</tr>
+<tr>
+<td>SHA-3-256</td>
+<td>200-400</td>
+<td>128-bit</td>
+</tr>
+<tr>
+<td>BLAKE2b</td>
+<td>800-1200</td>
+<td>128-bit</td>
+</tr>
+<tr>
+<td>BLAKE3</td>
+<td>1500-2000</td>
+<td>128-bit</td>
+</tr>
+<tr>
+<td>Argon2id</td>
+<td>0.1-10</td>
+<td>Configurable</td>
+</tr>
+</tbody></table>
+<h2 id="practical-applications">Practical Applications</h2>
+<h3 id="file-integrity">File Integrity</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">verify_file_integrity</span>(<span class="hljs-params">file_path: <span class="hljs-built_in">str</span>, expected_hash: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">bool</span>:
+    <span class="hljs-string">&quot;&quot;&quot;Verify file integrity using SHA-256.&quot;&quot;&quot;</span>
+    sha256_hash = hashlib.sha256()
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(file_path, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> f:
+        <span class="hljs-keyword">for</span> byte_block <span class="hljs-keyword">in</span> <span class="hljs-built_in">iter</span>(<span class="hljs-keyword">lambda</span>: f.read(<span class="hljs-number">4096</span>), <span class="hljs-string">b&quot;&quot;</span>):
+            sha256_hash.update(byte_block)
+    <span class="hljs-keyword">return</span> sha256_hash.hexdigest() == expected_hash
+</code></pre>
+<h3 id="api-authentication">API Authentication</h3>
+<pre><code class="language-go"><span class="hljs-comment">// Generate API signature</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">signRequest</span><span class="hljs-params">(apiKey, secret, method, path, body <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">string</span> {
+    timestamp := time.Now().Unix()
+    message := fmt.Sprintf(<span class="hljs-string">&quot;%d%s%s%s&quot;</span>, timestamp, method, path, body)
+    mac := hmac.New(sha256.New, []<span class="hljs-type">byte</span>(secret))
+    mac.Write([]<span class="hljs-type">byte</span>(message))
+    signature := base64.StdEncoding.EncodeToString(mac.Sum(<span class="hljs-literal">nil</span>))
+    <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">&quot;t=%d,s=%s&quot;</span>, timestamp, signature)
+}
+</code></pre>
+<h2 id="further-reading-1">Further Reading</h2>
+<ul>
+<li><a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf">NIST FIPS 180-4: Secure Hash Standard</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">OWASP Password Storage Cheat Sheet</a></li>
+<li><a href="https://github.com/BLAKE3-team/BLAKE3-specs">BLAKE3 Specification</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9106">Argon2 RFC</a></li>
+</ul>
+
+    </div>
+  </main>
+
+  <footer class="bg-dark-footer text-white-footer text-center py-3 mt-5">
+    <div class="card-header bg-dark-footer">
+      <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

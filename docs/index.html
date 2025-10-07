@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-lock me-2"></i>
+        <span>Cryptography Workshop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book me-1"></i> Modules
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+              <li>
+                <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+              </li>
+              <li><a class="dropdown-item" href="symmetric-crypto.html">
+                <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="public-key-crypto.html">
+                <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="hash-functions.html">
+                <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+              </li>
+              <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <div class="input-group">
+            <input class="form-control bg-dark text-white border-secondary" type="search" 
+                   placeholder="Search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container py-5" id="modules">
+    <h2 class="text-center mb-5">Cryptography Modules</h2>
+    <div class="row g-4">
+      <!-- Symmetric Crypto -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card">
+          <div class="card-img-top">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Symmetric Cryptography</h5>
+            <p class="card-text">Explore block ciphers, stream ciphers, and authenticated encryption schemes.</p>
+            <a href="symmetric-crypto.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public Key Crypto -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card">
+          <div class="card-img-top">
+            <i class="fas fa-key"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Public Key Cryptography</h5>
+            <p class="card-text">Learn about RSA, ECC, and other public key cryptosystems.</p>
+            <a href="public-key-crypto.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hash Functions -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card">
+          <div class="card-img-top">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Hash Functions</h5>
+            <p class="card-text">Understand cryptographic hash functions and their applications.</p>
+            <a href="hash-functions.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post-Quantum Crypto -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card">
+          <div class="card-img-top">
+            <i class="fas fa-atom"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Post-Quantum Crypto</h5>
+            <p class="card-text">Explore cryptographic algorithms resistant to quantum attacks.</p>
+            <a href="post-quantum-crypto.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Challenges Section -->
+  <div class="py-5" id="challenges">
+    <div class="container">
+      <h2 class="text-center mb-5">Cryptography Challenge Concepts</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Beginner</h5>
+              <h6 class="card-subtitle mb-2">Classical Ciphers</h6>
+              <p class="card-text">Solve challenges involving Caesar, Vigenère, and substitution ciphers.</p>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check-circle text-success me-2"></i>Caesar Cipher</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Vigenère Cipher</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Substitution Cipher</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Intermediate</h5>
+              <h6 class="card-subtitle mb-2">Modern Cryptography</h6>
+              <p class="card-text">Tackle challenges with AES, RSA, and ECC implementations.</p>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check-circle text-success me-2"></i>AES ECB/CBC Modes</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>RSA Cryptanalysis</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Elliptic Curve DLP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Advanced</h5>
+              <h6 class="card-subtitle mb-2">Post-Quantum & Side-Channels</h6>
+              <p class="card-text">Advanced topics including side-channel attacks and post-quantum crypto.</p>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check-circle text-success me-2"></i>Lattice-based Crypto</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Timing Attacks</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i>Fault Injection</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark-footer text-white-footer py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Cryptography Workshop</h5>
+          <p>Educational content on modern cryptographic techniques and protocols.</p>
+        </div>
+        <div class="col-md-3">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="symmetric-crypto.html" class="text-white">Symmetric Crypto</a></li>
+            <li><a href="public-key-crypto.html" class="text-white">Public Key Crypto</a></li>
+            <li><a href="hash-functions.html" class="text-white">Hash Functions</a></li>
+            <li><a href="post-quantum-crypto.html" class="text-white">Post-Quantum Crypto</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h5>Resources</h5>
+          <ul class="list-unstyled">
+            <li><a href="https://www.nist.gov/" class="text-white" target="_blank">NIST</a></li>
+            <li><a href="https://csrc.nist.gov/" class="text-white" target="_blank">NIST CSRC</a></li>
+            <li><a href="https://www.ietf.org/" class="text-white" target="_blank">IETF</a></li>
+            <li><a href="https://www.openssl.org/" class="text-white" target="_blank">OpenSSL</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="mt-4">
+      <div class="card-header bg-dark-footer">
+        <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Enable tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  </script>
+</body>
+</html>

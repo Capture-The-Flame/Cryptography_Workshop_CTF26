@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>symmetric-crypto - Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-lock me-2"></i>
+        <span>Cryptography Workshop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book me-1"></i> Modules
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+              <li>
+                <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+              </li>
+              <li><a class="dropdown-item" href="symmetric-crypto.html">
+                <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="public-key-crypto.html">
+                <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="hash-functions.html">
+                <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+              </li>
+              <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <div class="input-group">
+            <input class="form-control bg-dark text-white border-secondary" type="search" 
+                   placeholder="Search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="markdown-body">
+      <h1 id="symmetric-cryptography">Symmetric Cryptography</h1>
+<p>Symmetric cryptography uses the same key for both encryption and decryption. It’s fast and efficient for encrypting large amounts of data.</p>
+<h2 id="common-symmetric-algorithms">Common Symmetric Algorithms</h2>
+<h3 id="advanced-encryption-standard-aes">Advanced Encryption Standard (AES)</h3>
+<ul>
+<li>128-bit block cipher with key sizes of 128, 192, or 256 bits</li>
+<li>Modes: ECB, CBC, CFB, OFB, CTR, GCM</li>
+<li>Considered secure and widely adopted as the standard</li>
+<li>Used in TLS, disk encryption, and file encryption</li>
+</ul>
+<h3 id="chacha20">ChaCha20</h3>
+<ul>
+<li>Stream cipher designed for software implementations</li>
+<li>256-bit key and 64-bit nonce</li>
+<li>Faster than AES on platforms without AES-NI</li>
+<li>Used in TLS 1.3 and modern protocols</li>
+<li>Often paired with Poly1305 for authentication</li>
+</ul>
+<h3 id="legacy-algorithms">Legacy Algorithms</h3>
+<ul>
+<li><strong>3DES (Triple DES)</strong>: Applies DES three times with different keys</li>
+<li><strong>AES</strong>: 56-bit key (insecure, deprecated)</li>
+<li><strong>Blowfish</strong>: 64-bit block cipher with variable key length</li>
+<li><strong>RC4</strong>: Stream cipher (insecure, deprecated)</li>
+</ul>
+<h2 id="security-considerations">Security Considerations</h2>
+<ul>
+<li><strong>Key Management</strong>: Securely generate, store, and exchange keys</li>
+<li><strong>IVs</strong>: Never reuse Initialization Vectors (IVs)</li>
+<li><strong>Authentication</strong>: Use AEAD modes (like AES-GCM) when possible</li>
+<li><strong>Padding</strong>: Be aware of padding oracle attacks in CBC mode</li>
+<li><strong>Key Size</strong>: Use at least 128-bit keys (256-bit recommended)</li>
+</ul>
+<h2 id="implementation-examples">Implementation Examples</h2>
+<h3 id="python-aes-256-gcm">Python: AES-256-GCM</h3>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> cryptography.hazmat.primitives.ciphers.aead <span class="hljs-keyword">import</span> AESGCM
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">encrypt_aes_gcm</span>(<span class="hljs-params">plaintext, key=<span class="hljs-literal">None</span></span>):
+    <span class="hljs-keyword">if</span> key <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        key = os.urandom(<span class="hljs-number">32</span>)  <span class="hljs-comment"># 256-bit key</span>
+    aesgcm = AESGCM(key)
+    nonce = os.urandom(<span class="hljs-number">12</span>)  <span class="hljs-comment"># 96-bit nonce for GCM</span>
+    ciphertext = aesgcm.encrypt(nonce, plaintext.encode(), <span class="hljs-literal">None</span>)
+    <span class="hljs-keyword">return</span> key, nonce, ciphertext
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">decrypt_aes_gcm</span>(<span class="hljs-params">key, nonce, ciphertext</span>):
+    aesgcm = AESGCM(key)
+    <span class="hljs-keyword">return</span> aesgcm.decrypt(nonce, ciphertext, <span class="hljs-literal">None</span>).decode()
+</code></pre>
+<h3 id="go-chacha20-poly1305">Go: ChaCha20-Poly1305</h3>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/cipher&quot;</span>
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;golang.org/x/crypto/chacha20poly1305&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">encryptChaCha20</span><span class="hljs-params">(key, plaintext []<span class="hljs-type">byte</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) {
+    aead, err := chacha20poly1305.New(key)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    nonce := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, aead.NonceSize())
+    <span class="hljs-keyword">if</span> _, err := rand.Read(nonce); err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    <span class="hljs-keyword">return</span> aead.Seal(nonce, nonce, plaintext, <span class="hljs-literal">nil</span>), <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">decryptChaCha20</span><span class="hljs-params">(key, ciphertext []<span class="hljs-type">byte</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) {
+    aead, err := chacha20poly1305.New(key)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    nonceSize := aead.NonceSize()
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(ciphertext) &lt; nonceSize {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errors.New(<span class="hljs-string">&quot;ciphertext too short&quot;</span>)
+    }
+    nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
+    <span class="hljs-keyword">return</span> aead.Open(<span class="hljs-literal">nil</span>, nonce, ciphertext, <span class="hljs-literal">nil</span>)
+}
+</code></pre>
+<h3 id="c-aes-256-cbc-with-openssl">C: AES-256-CBC with OpenSSL</h3>
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/evp.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;openssl/rand.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">encrypt_aes_256_cbc</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *plaintext, <span class="hljs-type">int</span> plaintext_len, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *key,
+                        <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *iv, <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *ciphertext)</span> {
+    EVP_CIPHER_CTX *ctx;
+    <span class="hljs-type">int</span> len;
+    <span class="hljs-type">int</span> ciphertext_len;
+
+    <span class="hljs-keyword">if</span>(!(ctx = EVP_CIPHER_CTX_new()))
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+
+    <span class="hljs-keyword">if</span>(<span class="hljs-number">1</span> != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), <span class="hljs-literal">NULL</span>, key, iv))
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+
+    <span class="hljs-keyword">if</span>(<span class="hljs-number">1</span> != EVP_EncryptUpdate(ctx, ciphertext, &amp;len, plaintext, plaintext_len))
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    ciphertext_len = len;
+
+    <span class="hljs-keyword">if</span>(<span class="hljs-number">1</span> != EVP_EncryptFinal_ex(ctx, ciphertext + len, &amp;len))
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    ciphertext_len += len;
+
+    EVP_CIPHER_CTX_free(ctx);
+    <span class="hljs-keyword">return</span> ciphertext_len;
+}
+</code></pre>
+<h3 id="rust-xchacha20-poly1305">Rust: XChaCha20-Poly1305</h3>
+<pre><code class="language-rust"><span class="hljs-keyword">use</span> chacha20poly1305::{
+    aead::{Aead, KeyInit},
+    XChaCha20Poly1305, XNonce
+};
+<span class="hljs-keyword">use</span> rand_core::OsRng;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">encrypt_xchacha20</span>(key: &amp;[<span class="hljs-type">u8</span>; <span class="hljs-number">32</span>], plaintext: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> (XNonce, <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt;) {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">cipher</span> = XChaCha20Poly1305::<span class="hljs-title function_ invoke__">new_from_slice</span>(key).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">nonce</span> = XNonce::<span class="hljs-title function_ invoke__">from_slice</span>(<span class="hljs-string">b&quot;24-byte nonce for XChaCha20&quot;</span>);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">ciphertext</span> = cipher.<span class="hljs-title function_ invoke__">encrypt</span>(nonce, plaintext).<span class="hljs-title function_ invoke__">unwrap</span>();
+    (*nonce, ciphertext)
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">decrypt_xchacha20</span>(key: &amp;[<span class="hljs-type">u8</span>; <span class="hljs-number">32</span>], nonce: &amp;XNonce, ciphertext: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Result</span>&lt;<span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt;, <span class="hljs-type">String</span>&gt; {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">cipher</span> = XChaCha20Poly1305::<span class="hljs-title function_ invoke__">new_from_slice</span>(key).<span class="hljs-title function_ invoke__">map_err</span>(|e| e.<span class="hljs-title function_ invoke__">to_string</span>())?;
+    cipher.<span class="hljs-title function_ invoke__">decrypt</span>(nonce, ciphertext).<span class="hljs-title function_ invoke__">map_err</span>(|e| e.<span class="hljs-title function_ invoke__">to_string</span>())
+}
+</code></pre>
+<h2 id="performance-considerations">Performance Considerations</h2>
+<ul>
+<li><strong>Hardware Acceleration</strong>: AES-NI on x86 significantly improves AES performance</li>
+<li><strong>Key Size Impact</strong>: 256-bit keys are only marginally slower than 128-bit</li>
+<li><strong>Mode Selection</strong>: GCM provides both encryption and authentication</li>
+<li><strong>Memory Usage</strong>: Some modes require more memory than others</li>
+<li><strong>Parallelization</strong>: CTR and GCM modes support parallel encryption/decryption</li>
+</ul>
+<h2 id="authenticated-encryption-with-associated-data-aead">Authenticated Encryption with Associated Data (AEAD)</h2>
+<p>AEAD combines encryption and authentication into a single cryptographic scheme, ensuring both confidentiality and integrity of the encrypted data. It’s the recommended approach for modern cryptographic systems.</p>
+<h3 id="why-use-aead">Why Use AEAD?</h3>
+<ul>
+<li><strong>Simplicity</strong>: Single API for both encryption and authentication</li>
+<li><strong>Security</strong>: Eliminates the risk of combining encryption and MAC incorrectly</li>
+<li><strong>Performance</strong>: More efficient than separate encryption and MAC operations</li>
+<li><strong>Standardization</strong>: Well-vetted algorithms with strong security proofs</li>
+</ul>
+<h3 id="common-aead-algorithms">Common AEAD Algorithms</h3>
+<ol>
+<li><p><strong>AES-GCM</strong> (Galois/Counter Mode)</p>
+<ul>
+<li>Most widely used AEAD</li>
+<li>128-bit block cipher</li>
+<li>12-byte nonce (96 bits) recommended</li>
+<li>16-byte authentication tag (128 bits)</li>
+</ul>
+</li>
+<li><p><strong>ChaCha20-Poly1305</strong></p>
+<ul>
+<li>Faster in software than AES on non-AES-NI hardware</li>
+<li>256-bit key</li>
+<li>12-byte nonce</li>
+<li>16-byte authentication tag</li>
+</ul>
+</li>
+<li><p><strong>AES-CCM</strong></p>
+<ul>
+<li>Combines CTR mode with CBC-MAC</li>
+<li>Used in wireless protocols like 802.11i</li>
+<li>Slower than GCM due to two passes over the data</li>
+</ul>
+</li>
+</ol>
+<h3 id="implementation-examples-1">Implementation Examples</h3>
+<h4 id="python-aes-gcm">Python: AES-GCM</h4>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> cryptography.hazmat.primitives.ciphers.aead <span class="hljs-keyword">import</span> AESGCM
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">encrypt_aead</span>(<span class="hljs-params">key, plaintext, associated_data</span>):
+    <span class="hljs-comment"># Generate a random 96-bit nonce</span>
+    nonce = os.urandom(<span class="hljs-number">12</span>)
+    
+    <span class="hljs-comment"># Create AES-GCM cipher</span>
+    aesgcm = AESGCM(key)
+    
+    <span class="hljs-comment"># Encrypt and authenticate</span>
+    ciphertext = aesgcm.encrypt(nonce, plaintext, associated_data)
+    
+    <span class="hljs-comment"># Nonce is not secret, but must be unique for each encryption with the same key</span>
+    <span class="hljs-keyword">return</span> nonce, ciphertext
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">decrypt_aead</span>(<span class="hljs-params">key, nonce, ciphertext, associated_data</span>):
+    aesgcm = AESGCM(key)
+    <span class="hljs-keyword">return</span> aesgcm.decrypt(nonce, ciphertext, associated_data)
+</code></pre>
+<h4 id="go-chacha20-poly1305-1">Go: ChaCha20-Poly1305</h4>
+<pre><code class="language-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;crypto/cipher&quot;</span>
+    <span class="hljs-string">&quot;crypto/rand&quot;</span>
+    <span class="hljs-string">&quot;golang.org/x/crypto/chacha20poly1305&quot;</span>
+    <span class="hljs-string">&quot;io&quot;</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">encryptAEAD</span><span class="hljs-params">(key, plaintext, additionalData []<span class="hljs-type">byte</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) {
+    <span class="hljs-comment">// Create new ChaCha20-Poly1305 cipher</span>
+    aead, err := chacha20poly1305.New(key)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+
+    <span class="hljs-comment">// Nonce must be unique for each encryption with this key</span>
+    nonce := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, aead.NonceSize())
+    <span class="hljs-keyword">if</span> _, err := io.ReadFull(rand.Reader, nonce); err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+
+    <span class="hljs-comment">// Encrypt and authenticate</span>
+    ciphertext := aead.Seal(<span class="hljs-literal">nil</span>, nonce, plaintext, additionalData)
+    
+    <span class="hljs-comment">// Prepend nonce to ciphertext for storage/transmission</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">append</span>(nonce, ciphertext...), <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">decryptAEAD</span><span class="hljs-params">(key, data, additionalData []<span class="hljs-type">byte</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) {
+    aead, err := chacha20poly1305.New(key)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    
+    <span class="hljs-comment">// Extract nonce from the beginning of the data</span>
+    nonceSize := aead.NonceSize()
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(data) &lt; nonceSize {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errors.New(<span class="hljs-string">&quot;ciphertext too short&quot;</span>)
+    }
+    
+    nonce := data[:nonceSize]
+    ciphertext := data[nonceSize:]
+    
+    <span class="hljs-comment">// Decrypt and verify</span>
+    <span class="hljs-keyword">return</span> aead.Open(<span class="hljs-literal">nil</span>, nonce, ciphertext, additionalData)
+}
+</code></pre>
+<h3 id="security-considerations-for-aead">Security Considerations for AEAD</h3>
+<ol>
+<li><p><strong>Nonce Management</strong></p>
+<ul>
+<li>Never reuse a nonce with the same key</li>
+<li>Use a counter or cryptographically secure random nonce</li>
+<li>For AES-GCM, 96-bit nonces are recommended</li>
+</ul>
+</li>
+<li><p><strong>Key Management</strong></p>
+<ul>
+<li>Use proper key derivation for password-based encryption</li>
+<li>Rotate keys periodically</li>
+<li>Store keys securely (HSM, key management service)</li>
+</ul>
+</li>
+<li><p><strong>Associated Data</strong></p>
+<ul>
+<li>Authenticate all data that affects message handling</li>
+<li>Include protocol version numbers and message types</li>
+<li>Include message sequence numbers to prevent replay attacks</li>
+</ul>
+</li>
+</ol>
+<h3 id="performance-benchmarks">Performance Benchmarks</h3>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Throughput (MB/s)</th>
+<th>Latency (μs)</th>
+<th>Key Size</th>
+<th>Nonce Size</th>
+<th>Tag Size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AES-128-GCM</td>
+<td>1,200</td>
+<td>0.8</td>
+<td>16 B</td>
+<td>12 B</td>
+<td>16 B</td>
+</tr>
+<tr>
+<td>AES-256-GCM</td>
+<td>1,000</td>
+<td>1.0</td>
+<td>32 B</td>
+<td>12 B</td>
+<td>16 B</td>
+</tr>
+<tr>
+<td>ChaCha20-Poly1305</td>
+<td>900</td>
+<td>1.1</td>
+<td>32 B</td>
+<td>12 B</td>
+<td>16 B</td>
+</tr>
+<tr>
+<td>AES-CCM</td>
+<td>600</td>
+<td>1.8</td>
+<td>16/24/32 B</td>
+<td>13 B</td>
+<td>4-16 B</td>
+</tr>
+</tbody></table>
+<h3 id="common-pitfalls">Common Pitfalls</h3>
+<ol>
+<li><p><strong>Nonce Reuse</strong></p>
+<ul>
+<li>Catastrophic security failure in most AEAD schemes</li>
+<li>Solution: Use a counter or cryptographically secure random nonce</li>
+</ul>
+</li>
+<li><p><strong>Unverified Plaintext</strong></p>
+<ul>
+<li>Always verify the authentication tag before decrypting</li>
+<li>Solution: Use the API correctly - don’t skip verification</li>
+</ul>
+</li>
+<li><p><strong>Key Derivation</strong></p>
+<ul>
+<li>Weak keys from passwords can compromise security</li>
+<li>Solution: Use Argon2, scrypt, or PBKDF2 with sufficient iterations</li>
+</ul>
+</li>
+<li><p><strong>Timing Attacks</strong></p>
+<ul>
+<li>Some implementations may be vulnerable to timing attacks</li>
+<li>Solution: Use constant-time comparison for authentication tags</li>
+</ul>
+</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ol>
+<li><strong>Always use AEAD</strong> for new development when possible</li>
+<li><strong>Generate cryptographically secure</strong> random keys and nonces</li>
+<li><strong>Never reuse</strong> the same (key, nonce) pair</li>
+<li><strong>Use key derivation functions</strong> (like Argon2) for password-based encryption</li>
+<li><strong>Keep your cryptographic libraries</strong> up to date</li>
+<li><strong>Authenticate all data</strong> that affects message handling</li>
+<li><strong>Use appropriate key sizes</strong> (256-bit for long-term security)</li>
+<li><strong>Implement proper error handling</strong> - don’t leak timing information</li>
+<li><strong>Consider hardware acceleration</strong> for better performance</li>
+<li><strong>Regularly audit</strong> your implementation for security vulnerabilities</li>
+</ol>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://tools.ietf.org/html/rfc5116">RFC 5116: An Interface and Algorithms for AEAD</a></li>
+<li><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf">NIST Recommendation for Block Cipher Modes of Operation: GCM and GMAC</a></li>
+<li><a href="https://tools.ietf.org/html/rfc8439">ChaCha20 and Poly1305 for IETF Protocols</a></li>
+</ul>
+
+    </div>
+  </main>
+
+  <footer class="bg-dark-footer text-white-footer text-center py-3 mt-5">
+    <div class="card-header bg-dark-footer">
+      <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

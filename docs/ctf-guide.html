@@ -1,0 +1,876 @@
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTF Challenge Development Guide - Cryptography Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="fas fa-lock me-2"></i>
+        <span>Cryptography Workshop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">
+              <i class="fas fa-home me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="modulesDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-book me-1"></i> Modules
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="modulesDropdown">
+              <li>
+                <h6 class="dropdown-header text-uppercase fw-bold">Cryptography Modules</h6>
+              </li>
+              <li><a class="dropdown-item" href="symmetric-crypto.html">
+                <i class="fas fa-exchange-alt me-2"></i>Symmetric Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="public-key-crypto.html">
+                <i class="fas fa-key me-2"></i>Public Key Cryptography</a>
+              </li>
+              <li><a class="dropdown-item" href="hash-functions.html">
+                <i class="fas fa-hashtag me-2"></i>Hash Functions</a>
+              </li>
+              <li><a class="dropdown-item" href="post-quantum-crypto.html">
+                <i class="fas fa-atom me-2"></i>Post-Quantum Crypto</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ctf-guide.html">Challenge Guide</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <div class="input-group">
+            <input class="form-control bg-dark text-white border-secondary" type="search" 
+                   placeholder="Search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="toc">
+          <h5>Table of Contents</h5>
+          <nav>
+            <a href="#introduction">Introduction</a>
+            <a href="#design-principles">Design Principles</a>
+            <a href="#difficulty-levels">Difficulty Levels</a>
+            <a href="#challenge-categories">Challenge Categories</a>
+            <a href="#writing-descriptions">Writing Descriptions</a>
+            <a href="#hint-system">Hint System</a>
+            <a href="#flag-format">Flag Format</a>
+            <a href="#testing">Testing & Validation</a>
+            <a href="#writeups">Writing Writeups</a>
+            <a href="#common-pitfalls">Common Pitfalls</a>
+            <a href="#advanced-topics">Advanced Topics</a>
+            <a href="#resources">Resources</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <h1 class="mb-4">Comprehensive Guide to Developing Cryptography CTF Challenges</h1>
+        <p class="lead">A complete resource for creating educational, engaging, and high-quality cryptography challenges for Capture The Flag competitions.</p>
+
+        <!-- Introduction -->
+        <div id="introduction" class="guide-section">
+          <h2><i class="fas fa-info-circle me-2"></i>Introduction</h2>
+          <p>Cryptography challenges are a cornerstone of CTF competitions, testing participants' understanding of encryption, cryptanalysis, and secure systems. Well-designed challenges educate while entertaining, building skills that transfer directly to real-world security work.</p>
+          
+          <h4>Goals of This Guide</h4>
+          <ul>
+            <li>Help you create challenges that are educational and fair</li>
+            <li>Provide frameworks for different difficulty levels</li>
+            <li>Offer practical examples and anti-patterns to avoid</li>
+            <li>Enable you to write comprehensive writeups</li>
+            <li>Ensure your challenges are properly balanced and tested</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong><i class="fas fa-lightbulb me-2"></i>Core Philosophy:</strong> A great CTF challenge teaches something valuable, has a clear intended solution path, and rewards clever thinking without being unfair or guessy.
+          </div>
+        </div>
+
+        <!-- Design Principles -->
+        <div id="design-principles" class="guide-section">
+          <h2><i class="fas fa-pencil-ruler me-2"></i>Challenge Design Principles</h2>
+          
+          <h4>1. Educational Value</h4>
+          <p>Every challenge should teach participants something useful about cryptography:</p>
+          <ul>
+            <li>Real cryptographic concepts and algorithms</li>
+            <li>Common implementation mistakes</li>
+            <li>Cryptanalysis techniques</li>
+            <li>Security best practices (by showing what happens when they're violated)</li>
+          </ul>
+
+          <h4>2. Clear Intent</h4>
+          <p>Players should be able to identify what type of challenge they're solving:</p>
+          <ul>
+            <li>Challenge title hints at the category (e.g., "Broken RSA", "Weak Random")</li>
+            <li>Description provides necessary context without being a tutorial</li>
+            <li>Required tools/knowledge are reasonable for the difficulty level</li>
+          </ul>
+
+          <h4>3. Fair and Solvable</h4>
+          <ul class="checklist">
+            <li>All necessary information is provided or easily discoverable</li>
+            <li>No "guess what I'm thinking" moments</li>
+            <li>Intended solution is feasible within competition timeframe</li>
+            <li>Unintended solutions are either acceptable or prevented</li>
+            <li>Difficulty matches the points awarded</li>
+          </ul>
+
+          <h4>4. Realistic Scenarios</h4>
+          <p>Base challenges on real-world vulnerabilities when possible:</p>
+          <ul>
+            <li>RSA with small primes (real attack: factorization)</li>
+            <li>ECB mode misuse (real attack: ECB penguin)</li>
+            <li>Weak random number generation (real attack: predictable tokens)</li>
+            <li>Padding oracle attacks (real attack: Lucky Thirteen)</li>
+          </ul>
+
+          <div class="warning-box">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Avoid:</strong> Challenges that require brute forcing, guessing, or obscure trivia. These frustrate players and don't teach valuable skills.
+          </div>
+        </div>
+
+        <!-- Difficulty Levels -->
+        <div id="difficulty-levels" class="guide-section">
+          <h2><i class="fas fa-chart-line me-2"></i>Difficulty Levels</h2>
+
+          <h4><span class="badge bg-success difficulty-badge">Beginner (100-150 pts)</span></h4>
+          <p><strong>Target Audience:</strong> Players with basic programming knowledge, minimal crypto experience</p>
+          <p><strong>Concepts:</strong></p>
+          <ul>
+            <li>Classical ciphers (Caesar, Vigenère, substitution)</li>
+            <li>Simple encoding schemes (Base64, hex, ASCII)</li>
+            <li>Basic XOR operations</li>
+            <li>Recognizing common hash algorithms</li>
+          </ul>
+          <p><strong>Solution Path:</strong> Should be solvable with online tools or simple scripts (5-15 minutes)</p>
+          <p><strong>Example:</strong> "Decode this Base64 string, then apply ROT13"</p>
+
+          <h4><span class="badge bg-primary difficulty-badge">Easy (200-250 pts)</span></h4>
+          <p><strong>Target Audience:</strong> Players familiar with basic crypto concepts</p>
+          <p><strong>Concepts:</strong></p>
+          <ul>
+            <li>Modern ciphers with obvious weaknesses</li>
+            <li>Frequency analysis</li>
+            <li>Simple RSA scenarios (small e, common modulus)</li>
+            <li>Basic hash collisions (MD5, deprecated algorithms)</li>
+          </ul>
+          <p><strong>Solution Path:</strong> Requires basic scripting or standard tools (15-45 minutes)</p>
+
+          <h4><span class="badge bg-warning text-dark difficulty-badge">Medium (300-400 pts)</span></h4>
+          <p><strong>Target Audience:</strong> Players with solid crypto fundamentals</p>
+          <p><strong>Concepts:</strong></p>
+          <ul>
+            <li>RSA attacks (Wiener's attack, Coppersmith's theorem)</li>
+            <li>Block cipher mode weaknesses (ECB, CBC bit flipping)</li>
+            <li>Elliptic curve cryptography basics</li>
+            <li>Stream cipher vulnerabilities (nonce reuse)</li>
+            <li>Simple padding oracle attacks</li>
+          </ul>
+          <p><strong>Solution Path:</strong> Requires understanding of attack techniques and custom scripting (45-90 minutes)</p>
+
+          <h4><span class="badge bg-danger difficulty-badge">Hard (500-700 pts)</span></h4>
+          <p><strong>Target Audience:</strong> Experienced crypto players</p>
+          <p><strong>Concepts:</strong></p>
+          <ul>
+            <li>Advanced RSA attacks (Boneh-Durfee, LSB oracle)</li>
+            <li>ECC attacks (invalid curve, small subgroup)</li>
+            <li>Complex oracle attacks (timing, error message leaks)</li>
+            <li>Side-channel analysis</li>
+            <li>Hash function attacks (length extension, collision finding)</li>
+          </ul>
+          <p><strong>Solution Path:</strong> Requires deep understanding and potentially hours of work (2-6 hours)</p>
+
+          <h4><span class="badge bg-dark difficulty-badge">Expert/Insane (800-1000+ pts)</span></h4>
+          <p><strong>Target Audience:</strong> Elite players with extensive crypto knowledge</p>
+          <p><strong>Concepts:</strong></p>
+          <ul>
+            <li>Lattice-based cryptanalysis (LLL, BKZ)</li>
+            <li>Advanced number theory attacks</li>
+            <li>Zero-knowledge proof systems</li>
+            <li>Post-quantum cryptography</li>
+            <li>Novel attack combinations</li>
+          </ul>
+          <p><strong>Solution Path:</strong> May require research, complex mathematics, and significant computation (6+ hours)</p>
+        </div>
+
+        <!-- Challenge Categories -->
+        <div id="challenge-categories" class="guide-section">
+          <h2><i class="fas fa-th-large me-2"></i>Challenge Categories</h2>
+
+          <h4>1. Classical Cryptography</h4>
+          <p><strong>Good for:</strong> Beginner challenges, pattern recognition</p>
+          <p><strong>Common Types:</strong></p>
+          <ul>
+            <li>Caesar cipher with various shifts</li>
+            <li>Vigenère cipher with known/unknown key length</li>
+            <li>Substitution ciphers (simple, homophonic)</li>
+            <li>Transposition ciphers (rail fence, columnar)</li>
+            <li>Playfair, Beaufort, or Autokey ciphers</li>
+          </ul>
+          <p><strong>Design Tips:</strong></p>
+          <ul>
+            <li>Provide sufficient ciphertext for statistical analysis</li>
+            <li>Consider adding obfuscation layers (encoding before encryption)</li>
+            <li>Hint at the cipher type in the challenge title or description</li>
+          </ul>
+
+          <h4>2. Symmetric Cryptography</h4>
+          <p><strong>Good for:</strong> All difficulty levels</p>
+          <p><strong>Common Types:</strong></p>
+          <ul>
+            <li><strong>Mode Attacks:</strong> ECB reordering, CBC bit-flipping, CTR nonce reuse</li>
+            <li><strong>Padding Attacks:</strong> Oracle attacks on PKCS#7 padding</li>
+            <li><strong>Key Derivation:</strong> Weak passwords, predictable IVs</li>
+            <li><strong>Implementation Flaws:</strong> Custom crypto, weak randomness</li>
+          </ul>
+          <p><strong>Design Tips:</strong></p>
+          <ul>
+            <li>Clearly specify the mode and parameters used</li>
+            <li>Provide an oracle or service for interactive challenges</li>
+            <li>Ensure attacks are feasible computationally</li>
+          </ul>
+
+          <h4>3. Asymmetric Cryptography (RSA)</h4>
+          <p><strong>Good for:</strong> Medium to hard challenges</p>
+          <p><strong>Common Attacks:</strong></p>
+          <ul>
+            <li><strong>Factorization:</strong> Small primes, Fermat's method, Pollard's p-1</li>
+            <li><strong>Small Exponents:</strong> Low public exponent attacks, Håstad's broadcast attack</li>
+            <li><strong>Common Modulus:</strong> Multiple messages with same n but different e</li>
+            <li><strong>Wiener's Attack:</strong> Small private exponent d</li>
+            <li><strong>Coppersmith's Method:</strong> Known plaintext bits, related messages</li>
+            <li><strong>LSB Oracle:</strong> Chosen ciphertext attack revealing plaintext bits</li>
+          </ul>
+
+          <h4>4. Elliptic Curve Cryptography</h4>
+          <p><strong>Good for:</strong> Medium to expert challenges</p>
+          <p><strong>Common Attacks:</strong></p>
+          <ul>
+            <li><strong>Invalid Curve:</strong> Points not on the curve, small subgroup attacks</li>
+            <li><strong>Nonce Reuse:</strong> ECDSA signature vulnerabilities</li>
+            <li><strong>MOV Attack:</strong> Weak curves reducing ECDLP to DLP</li>
+            <li><strong>Smart's Attack:</strong> Anomalous curves over small fields</li>
+          </ul>
+
+          <h4>5. Hash Functions</h4>
+          <p><strong>Good for:</strong> All difficulty levels</p>
+          <p><strong>Common Types:</strong></p>
+          <ul>
+            <li><strong>Length Extension:</strong> Merkle-Damgård construction vulnerabilities</li>
+            <li><strong>Collision Finding:</strong> Birthday paradox, chosen-prefix collisions</li>
+            <li><strong>Hash Cracking:</strong> Rainbow tables, dictionary attacks</li>
+            <li><strong>HMAC Timing:</strong> Side-channel attacks on authentication</li>
+          </ul>
+
+          <h4>6. Post-Quantum Cryptography</h4>
+          <p><strong>Good for:</strong> Expert/insane challenges</p>
+          <p><strong>Topics:</strong></p>
+          <ul>
+            <li>Lattice-based schemes (LWE, NTRU)</li>
+            <li>Code-based cryptography (McEliece)</li>
+            <li>Hash-based signatures (SPHINCS+)</li>
+            <li>Multivariate cryptography (Rainbow)</li>
+          </ul>
+        </div>
+
+        <!-- Writing Descriptions -->
+        <div id="writing-descriptions" class="guide-section">
+          <h2><i class="fas fa-file-alt me-2"></i>Writing Challenge Descriptions</h2>
+
+          <h4>Components of a Good Description</h4>
+          
+          <p><strong>1. Context/Story (Optional but Engaging)</strong></p>
+          <pre>You've intercepted an encrypted message from a criminal organization. 
+Intelligence suggests they're using a weak encryption scheme. Can you 
+decrypt it before their next operation?</pre>
+
+          <p><strong>2. Technical Information (Required)</strong></p>
+          <ul>
+            <li>What algorithm or protocol is being used</li>
+            <li>Any relevant parameters (key size, modulus, etc.)</li>
+            <li>What the player needs to find (decrypt message, forge signature, etc.)</li>
+          </ul>
+
+          <p><strong>3. Given Materials</strong></p>
+          <ul>
+            <li>Source code (if applicable)</li>
+            <li>Ciphertext or encrypted data</li>
+            <li>Public keys or parameters</li>
+            <li>Connection information for services</li>
+          </ul>
+
+          <p><strong>4. Flag Format (Always Include)</strong></p>
+          <pre>Flag format: flag{...} or CTF{...} or uiuc{...}</pre>
+
+          <h4>Example Descriptions by Difficulty</h4>
+
+          <p><strong>Beginner Example:</strong></p>
+          <div class="p-3 rounded">
+            <h5>Title: "Simple Substitution"</h5>
+            <p>We found this encrypted note in a suspect's apartment. It looks like a simple substitution cipher. Can you decode it?</p>
+            <p><code>KFCCR VRIGH! IFF BRN QFMR TVFUU IK JFXQNKFI UIXNFIQB!</code></p>
+            <p><strong>Hint:</strong> The most common letter in English is 'E'</p>
+            <p><strong>Flag format:</strong> flag{plaintext_message}</p>
+          </div>
+
+          <p><strong>Medium Example:</strong></p>
+          <div class="p-3 rounded mt-3">
+            <h5>Title: "Weak RSA Implementation"</h5>
+            <p>We've discovered a company using RSA with dangerously small prime numbers for "performance reasons." They claim it's still secure because the primes are random. Prove them wrong by decrypting their CEO's encrypted message.</p>
+            <p><strong>Given:</strong></p>
+            <ul>
+              <li>n = 0x00b1ac3... (modulus)</li>
+              <li>e = 65537 (public exponent)</li>
+              <li>c = 0x8f3a2... (ciphertext)</li>
+            </ul>
+            <p><strong>Note:</strong> The primes used are both less than 2^512</p>
+            <p><strong>Flag format:</strong> flag{hex_plaintext}</p>
+          </div>
+        </div>
+
+        <!-- Hint System -->
+        <div id="hint-system" class="guide-section">
+          <h2><i class="fas fa-question-circle me-2"></i>Designing an Effective Hint System</h2>
+
+          <h4>Hint Philosophy</h4>
+          <p>Hints should guide players toward the solution without giving it away entirely. Each hint should provide progressively more specific information.</p>
+
+          <h4>Hint Tiers</h4>
+
+          <p><strong>Tier 1: Direction (What to Look For)</strong></p>
+          <p>Points players to the general attack category or vulnerability.</p>
+          <pre>Example: "The modulus can be factored using well-known tools."</pre>
+
+          <p><strong>Tier 2: Approach (How to Start)</strong></p>
+          <p>Suggests specific tools or techniques.</p>
+          <pre>Example: "Try using factordb.com or yafu to factor the modulus."</pre>
+
+          <p><strong>Tier 3: Implementation Detail</strong></p>
+          <p>Provides specific steps or code snippets.</p>
+          <pre>Example: "After factoring n into p and q, calculate φ(n) = (p-1)(q-1), 
+then find d = e^(-1) mod φ(n) using the extended Euclidean algorithm."</pre>
+
+          <h4>Hint Timing</h4>
+          <ul>
+            <li><strong>Beginner:</strong> 1 hint that's fairly direct</li>
+            <li><strong>Easy:</strong> 1-2 hints pointing to the attack type and tools</li>
+            <li><strong>Medium:</strong> 2-3 hints progressively revealing the solution</li>
+            <li><strong>Hard:</strong> 2-3 hints that still require significant work</li>
+            <li><strong>Expert:</strong> 3+ hints that clarify the problem but don't solve it</li>
+          </ul>
+
+          <div class="tip-box">
+            <strong><i class="fas fa-lightbulb me-2"></i>Pro Tip:</strong> Consider implementing a hint penalty system where each hint costs points, encouraging players to try harder before seeking help.
+          </div>
+        </div>
+
+        <!-- Flag Format -->
+        <div id="flag-format" class="guide-section">
+          <h2><i class="fas fa-flag me-2"></i>Flag Format and Submission</h2>
+
+          <h4>Standard Flag Formats</h4>
+          <ul>
+            <li><code>flag{...}</code> - Generic format</li>
+            <li><code>CTF{...}</code> - Competition-specific</li>
+            <li><code>uiuc{...}</code> - University/organization-specific</li>
+          </ul>
+
+          <h4>Flag Content Types</h4>
+
+          <p><strong>1. Plaintext Messages</strong></p>
+          <pre>flag{this_is_the_decrypted_message}</pre>
+          <p><strong>Best for:</strong> Decryption challenges, encoding puzzles</p>
+
+          <p><strong>2. Hexadecimal Values</strong></p>
+          <pre>flag{deadbeef1337c0de}</pre>
+          <p><strong>Best for:</strong> Binary data, hash outputs</p>
+
+          <p><strong>3. Computed Values</strong></p>
+          <pre>flag{12345678901234567890}</pre>
+          <p><strong>Best for:</strong> Mathematical solutions, private keys</p>
+
+          <h4>Flag Generation Best Practices</h4>
+          <ul class="checklist">
+            <li>Make flags unambiguous (avoid similar characters like O/0, l/1)</li>
+            <li>Use lowercase for consistency</li>
+            <li>Clearly specify the expected format in the challenge description</li>
+            <li>Consider case-insensitive flag checking when appropriate</li>
+            <li>Avoid spaces unless absolutely necessary</li>
+            <li>For hash challenges, specify the algorithm and format (e.g., "MD5 in hex")</li>
+          </ul>
+
+          <h4>Dynamic Flags</h4>
+          <p>For larger competitions, consider dynamic flags where each team gets a unique flag:</p>
+          <ul>
+            <li>Prevents flag sharing between teams</li>
+            <li>Requires server-side infrastructure</li>
+            <li>Must ensure all instances are equally difficult</li>
+          </ul>
+        </div>
+
+        <!-- Testing -->
+        <div id="testing" class="guide-section">
+          <h2><i class="fas fa-vial me-2"></i>Testing and Validation</h2>
+
+          <h4>Testing Checklist</h4>
+          <ul class="checklist">
+            <li>Solve the challenge yourself from scratch</li>
+            <li>Have someone at the target skill level test it</li>
+            <li>Verify the challenge is solvable in the estimated time</li>
+            <li>Check for unintended solutions</li>
+            <li>Test all provided files and scripts</li>
+            <li>Verify connection details for networked challenges</li>
+            <li>Ensure hints are accurate and helpful</li>
+            <li>Confirm the flag format is correct</li>
+          </ul>
+
+          <h4>Common Issues to Check</h4>
+
+          <p><strong>1. Mathematical Accuracy</strong></p>
+          <ul>
+            <li>All cryptographic parameters are valid</li>
+            <li>Modular arithmetic is correct</li>
+            <li>No typos in large numbers</li>
+          </ul>
+
+          <p><strong>2. Code Quality</strong></p>
+          <ul>
+            <li>Source code runs without errors</li>
+            <li>Dependencies are documented</li>
+            <li>No debug output that spoils the solution</li>
+          </ul>
+
+          <p><strong>3. Difficulty Calibration</strong></p>
+          <ul>
+            <li>Time to solve matches the difficulty rating</li>
+            <li>Required knowledge is appropriate for the category</li>
+            <li>No impossible steps or dead ends</li>
+          </ul>
+
+          <p><strong>4. Accessibility</strong></p>
+          <ul>
+            <li>Challenge is solvable without expensive tools</li>
+            <li>Computational requirements are reasonable</li>
+            <li>Network services are stable and accessible</li>
+          </ul>
+
+          <div class="warning-box">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Critical:</strong> Always test with fresh eyes. What seems obvious to you as the creator may be obscure to solvers.
+          </div>
+        </div>
+
+        <!-- Writeups -->
+        <div id="writeups" class="guide-section">
+          <h2><i class="fas fa-book me-2"></i>Writing Comprehensive Writeups</h2>
+
+          <h4>Why Write Writeups?</h4>
+          <ul>
+            <li>Help players learn from challenges they couldn't solve</li>
+            <li>Provide reference material for similar problems</li>
+            <li>Document your intended solution path</li>
+            <li>Build your reputation as a challenge author</li>
+          </ul>
+
+          <h4>Writeup Structure</h4>
+
+          <p><strong>1. Challenge Overview</strong></p>
+          <ul>
+            <li>Brief description of the challenge</li>
+            <li>Difficulty level and point value</li>
+            <li>Category (crypto, reversing, web, etc.)</li>
+          </ul>
+
+          <p><strong>2. Initial Analysis</strong></p>
+          <ul>
+            <li>What's immediately apparent from the challenge?</li>
+            <li>What files or information are provided?</li>
+            <li>What's the goal (decrypt, forge, crack, etc.)?</li>
+          </ul>
+
+          <p><strong>3. Identifying the Vulnerability</strong></p>
+          <ul>
+            <li>What weakness or attack vector exists?</li>
+            <li>Why is this exploitable?</li>
+            <li>What prerequisites are needed (tools, knowledge)?</li>
+          </ul>
+
+          <p><strong>4. Step-by-Step Solution</strong></p>
+          <ul>
+            <li>Detailed explanation of each step</li>
+            <li>Code snippets with comments</li>
+            <li>Output from intermediate steps</li>
+            <li>Explanation of why each step works</li>
+          </ul>
+
+          <p><strong>5. Alternative Solutions</strong></p>
+          <ul>
+            <li>Mention other valid approaches</li>
+            <li>Discuss unintended solutions if they occurred</li>
+            <li>Compare efficiency of different methods</li>
+          </ul>
+
+          <p><strong>6. Learning Points</strong></p>
+          <ul>
+            <li>Key cryptographic concepts demonstrated</li>
+            <li>How to recognize similar vulnerabilities</li>
+            <li>Real-world implications</li>
+            <li>Mitigation techniques</li>
+          </ul>
+
+          <h4>Example Writeup Excerpt</h4>
+          <div class="p-3 rounded">
+            <h5>Challenge: "Weak RSA Modulus"</h5>
+            <p><strong>Category:</strong> Cryptography (Medium, 300 points)</p>
+            
+            <p><strong>Challenge Description:</strong><br>
+            We intercepted an RSA-encrypted message with unusually small parameters...</p>
+
+            <p><strong>Initial Analysis:</strong><br>
+            We're given:</p>
+            <ul>
+              <li>n = 0x00c4f5... (256-bit modulus)</li>
+              <li>e = 65537</li>
+              <li>c = 0x5b9a5e...</li>
+            </ul>
+
+            <p><strong>Vulnerability:</strong><br>
+            The modulus is only 256 bits, making it vulnerable to factorization. Modern standards require at least 2048 bits.</p>
+
+            <p><strong>Solution:</strong></p>
+            <pre>from Crypto.Util.number import inverse, long_to_bytes
+import sympy
+
+# Factor the modulus
+n = 0x00c4f5f6a6e7d8e9...
+factors = sympy.factorint(n)
+p, q = list(factors.keys())
+
+# Calculate private exponent
+phi = (p-1) * (q-1)
+d = inverse(e, phi)
+
+# Decrypt
+m = pow(c, d, n)
+flag = long_to_bytes(m).decode()
+print(f"Flag: {flag}")</pre>
+
+            <p><strong>Flag:</strong> flag{48656c6c6f2052534121212121}</p>
+
+            <p><strong>Key Takeaways:</strong></p>
+            <ul>
+              <li>Small RSA moduli can be factored in seconds</li>
+              <li>Always use at least 2048-bit keys in production</li>
+              <li>This demonstrates the importance of key size in cryptographic security</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Common Pitfalls -->
+        <div id="common-pitfalls" class="guide-section">
+          <h2><i class="fas fa-exclamation-triangle me-2"></i>Common Pitfalls to Avoid</h2>
+
+          <h4>1. Guessing Games</h4>
+          <p><strong>Problem:</strong> Challenge requires players to guess obscure details</p>
+          <p><strong>Example:</strong> "The key is my favorite number between 1 and 1000000"</p>
+          <p><strong>Solution:</strong> Provide clear constraints or hints that narrow possibilities</p>
+
+          <h4>2. Unreasonable Computation</h4>
+          <p><strong>Problem:</strong> Solution requires days of computation on standard hardware</p>
+          <p><strong>Example:</strong> Brute-forcing 80-bit keys without hints</p>
+          <p><strong>Solution:</strong> Ensure challenges are solvable in hours, not days</p>
+
+          <h4>3. Broken Infrastructure</h4>
+          <p><strong>Problem:</strong> Network services crash or have rate limiting issues</p>
+          <p><strong>Solution:</strong> Stress test your services, implement proper error handling</p>
+
+          <h4>4. Ambiguous Requirements</h4>
+          <p><strong>Problem:</strong> Players don't know what format to submit</p>
+          <p><strong>Example:</strong> "Submit the answer" (as hex? decimal? ASCII?)</p>
+          <p><strong>Solution:</strong> Always specify exact flag format</p>
+
+          <h4>5. Unintended Solutions</h4>
+          <p><strong>Problem:</strong> Challenge can be solved without understanding the concept</p>
+          <p><strong>Example:</strong> Source code contains hardcoded flag</p>
+          <p><strong>Solution:</strong> Review all materials for information leakage</p>
+
+          <h4>6. Insufficient Information</h4>
+          <p><strong>Problem:</strong> Critical information is missing or unclear</p>
+          <p><strong>Example:</strong> Not specifying the cipher mode or padding scheme</p>
+          <p><strong>Solution:</strong> Provide all necessary technical details</p>
+
+          <h4>7. Real-World Dangerous Code</h4>
+          <p><strong>Problem:</strong> Challenge accidentally teaches insecure practices</p>
+          <p><strong>Example:</strong> Showing how to implement crypto without warnings</p>
+          <p><strong>Solution:</strong> Include warnings about not using custom crypto in production</p>
+
+          <h4>8. Overly Specific Tools</h4>
+          <p><strong>Problem:</strong> Challenge requires rare or expensive software</p>
+          <p><strong>Example:</strong> "Solve this using IDA Pro" (expensive tool)</p>
+          <p><strong>Solution:</strong> Ensure solutions work with free, open-source tools</p>
+
+          <div class="warning-box">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Remember:</strong> If you find yourself thinking "players should know this," ask yourself if it's reasonable for the target difficulty level. Document edge cases clearly.
+          </div>
+        </div>
+
+        <!-- Advanced Topics -->
+        <div id="advanced-topics" class="guide-section">
+          <h2><i class="fas fa-graduation-cap me-2"></i>Advanced Challenge Design Topics</h2>
+
+          <h4>1. Multi-Stage Challenges</h4>
+          <p>Challenges where solving one part reveals the next:</p>
+          <ul>
+            <li>First decrypt outer layer to get second ciphertext</li>
+            <li>Use information from first stage to solve second</li>
+            <li>Final flag requires combining information from all stages</li>
+          </ul>
+          <p><strong>Benefits:</strong> More engaging, tests multiple skills</p>
+          <p><strong>Caution:</strong> Each stage should be achievable; avoid making early stages too hard</p>
+
+          <h4>2. Interactive Challenges</h4>
+          <p>Challenges requiring interaction with a service:</p>
+          <ul>
+            <li>Padding oracle servers</li>
+            <li>Signature verification services</li>
+            <li>Timed challenges with rate limits</li>
+          </ul>
+          <p><strong>Implementation Considerations:</strong></p>
+          <ul>
+            <li>Rate limiting to prevent abuse</li>
+            <li>Proper error handling</li>
+            <li>Connection timeouts</li>
+            <li>Resource limits (CPU, memory)</li>
+            <li>Docker containers for isolation</li>
+          </ul>
+
+          <h4>3. Side-Channel Challenges</h4>
+          <p>Exploiting timing, power, or other side channels:</p>
+          <ul>
+            <li>Timing attacks on authentication</li>
+            <li>Cache-timing attacks</li>
+            <li>Power analysis simulation</li>
+          </ul>
+          <p><strong>Design Tips:</strong></p>
+          <ul>
+            <li>Simulate side channels clearly (don't require actual hardware)</li>
+            <li>Provide data collection scripts</li>
+            <li>Make timing differences significant</li>
+          </ul>
+
+          <h4>4. Protocol-Breaking Challenges</h4>
+          <p>Attacking cryptographic protocols rather than primitives:</p>
+          <ul>
+            <li>TLS downgrade attacks</li>
+            <li>Authentication bypass</li>
+            <li>Key exchange vulnerabilities</li>
+          </ul>
+
+          <h4>5. Code Analysis Challenges</h4>
+          <p>Finding vulnerabilities in implementation:</p>
+          <ul>
+            <li>Custom crypto implementations with subtle bugs</li>
+            <li>Weak random number generation</li>
+            <li>Integer overflow in crypto code</li>
+            <li>Timing vulnerabilities</li>
+          </ul>
+
+          <h4>6. Mathematical Challenges</h4>
+          <p>Heavy focus on number theory and algebra:</p>
+          <ul>
+            <li>Lattice reduction problems</li>
+            <li>Discrete logarithm variants</li>
+            <li>Polynomial reconstruction</li>
+            <li>Chinese Remainder Theorem applications</li>
+          </ul>
+
+          <h4>7. Real-World CVE Recreation</h4>
+          <p>Simplified versions of actual vulnerabilities:</p>
+          <ul>
+            <li>Heartbleed-style buffer over-reads</li>
+            <li>POODLE attack simulation</li>
+            <li>Bleichenbacher's attack on RSA</li>
+          </ul>
+          <p><strong>Benefits:</strong> Teaches real security history</p>
+          <p><strong>Caution:</strong> Simplify appropriately for CTF timeframe</p>
+        </div>
+
+        <!-- Resources -->
+        <div id="resources" class="guide-section">
+          <h2><i class="fas fa-link me-2"></i>Resources for Challenge Authors</h2>
+
+          <h4>Cryptographic Libraries</h4>
+          <ul>
+            <li><strong>Python:</strong> pycryptodome, cryptography, sage</li>
+            <li><strong>Go:</strong> crypto/* standard library packages</li>
+            <li><strong>Rust:</strong> ring, rust-crypto</li>
+            <li><strong>C/C++:</strong> OpenSSL, libsodium</li>
+          </ul>
+
+          <h4>Testing and Analysis Tools</h4>
+          <ul>
+            <li><strong>CyberChef:</strong> Web-based encoding/decoding</li>
+            <li><strong>RsaCtfTool:</strong> Automated RSA attack tool</li>
+            <li><strong>factordb.com:</strong> Large integer factorization database</li>
+            <li><strong>SageMath:</strong> Mathematical software for cryptanalysis</li>
+            <li><strong>hashcat:</strong> Password cracking</li>
+            <li><strong>John the Ripper:</strong> Password cracking</li>
+          </ul>
+
+          <h4>Learning Resources</h4>
+          <ul>
+            <li><strong>Cryptopals:</strong> Comprehensive crypto challenges</li>
+            <li><strong>CryptoHack:</strong> Modern crypto learning platform</li>
+            <li><strong>CTFtime:</strong> Archive of past CTF challenges</li>
+            <li><strong>IACR ePrint:</strong> Academic crypto papers</li>
+          </ul>
+
+          <h4>Reference Materials</h4>
+          <ul>
+            <li><a href="https://www.nist.gov/cryptography" target="_blank">NIST Cryptography Standards</a></li>
+            <li><a href="https://tools.ietf.org/html/rfc" target="_blank">IETF RFCs</a></li>
+            <li><a href="https://www.schneier.com/" target="_blank">Bruce Schneier's Blog</a></li>
+            <li><a href="https://crypto.stackexchange.com/" target="_blank">Cryptography Stack Exchange</a></li>
+          </ul>
+
+          <h4>Vulnerability Databases</h4>
+          <ul>
+            <li><strong>CVE Database:</strong> Real-world crypto vulnerabilities</li>
+            <li><strong>CWE:</strong> Common weakness enumeration</li>
+            <li><strong>OWASP:</strong> Web application security</li>
+          </ul>
+
+          <h4>CTF Platforms</h4>
+          <ul>
+            <li><strong>CTFd:</strong> Open-source CTF platform</li>
+            <li><strong>rCTF:</strong> Modern, scalable platform</li>
+            <li><strong>HackTheBox:</strong> Continuous platform</li>
+            <li><strong>picoCTF:</strong> Educational platform</li>
+          </ul>
+        </div>
+
+        <!-- Best Practices Summary -->
+        <div class="guide-section">
+          <h2><i class="fas fa-check-circle me-2"></i>Quick Reference: Best Practices</h2>
+
+          <div class="row">
+            <div class="col-md-6">
+              <h5>Do:</h5>
+              <ul class="checklist">
+                <li>Test your challenges thoroughly</li>
+                <li>Provide clear flag formats</li>
+                <li>Write comprehensive descriptions</li>
+                <li>Create meaningful hints</li>
+                <li>Document your solution</li>
+                <li>Base challenges on real concepts</li>
+                <li>Consider various skill levels</li>
+                <li>Provide source code when relevant</li>
+                <li>Specify all technical details</li>
+                <li>Make challenges educational</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h5>Don't:</h5>
+              <ul style="list-style: none; padding-left: 0;">
+                <li>❌ Require guessing or brute forcing</li>
+                <li>❌ Leave out critical information</li>
+                <li>❌ Make challenges unsolvable</li>
+                <li>❌ Require expensive tools</li>
+                <li>❌ Include unintended solutions</li>
+                <li>❌ Make computation unreasonable</li>
+                <li>❌ Use ambiguous instructions</li>
+                <li>❌ Forget to test with fresh eyes</li>
+                <li>❌ Skip writing hints</li>
+                <li>❌ Ignore accessibility concerns</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="guide-section">
+          <h2><i class="fas fa-trophy me-2"></i>Conclusion</h2>
+          <p>Creating excellent cryptography CTF challenges is both an art and a science. The best challenges:</p>
+          <ul>
+            <li>Teach valuable concepts that transfer to real-world security</li>
+            <li>Are fair and well-balanced for their difficulty level</li>
+            <li>Provide clear paths to solution without being trivial</li>
+            <li>Respect players' time with reasonable computational requirements</li>
+            <li>Include comprehensive documentation and writeups</li>
+          </ul>
+
+          <p>Remember that every challenge you create is an opportunity to educate and inspire the next generation of security professionals. Take pride in your work, test thoroughly, and always prioritize the learning experience.</p>
+
+          <div class="tip-box">
+            <strong><i class="fas fa-lightbulb me-2"></i>Final Tip:</strong> Join the CTF community! Participate in competitions, read writeups, and learn from experienced challenge authors. The best way to improve is through practice and feedback.
+          </div>
+
+          <p class="text-center mt-4">
+            <strong>Happy challenge creating!</strong>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-dark-footer text-white-footer py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Cryptography Workshop</h5>
+          <p>Educational content on modern cryptographic techniques and protocols.</p>
+        </div>
+        <div class="col-md-3">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="symmetric-crypto.html" class="text-white">Symmetric Crypto</a></li>
+            <li><a href="public-key-crypto.html" class="text-white">Public Key Crypto</a></li>
+            <li><a href="hash-functions.html" class="text-white">Hash Functions</a></li>
+            <li><a href="post-quantum-crypto.html" class="text-white">Post-Quantum Crypto</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h5>Resources</h5>
+          <ul class="list-unstyled">
+            <li><a href="https://www.nist.gov/" class="text-white" target="_blank">NIST</a></li>
+            <li><a href="https://csrc.nist.gov/" class="text-white" target="_blank">NIST CSRC</a></li>
+            <li><a href="https://www.ietf.org/" class="text-white" target="_blank">IETF</a></li>
+            <li><a href="https://www.openssl.org/" class="text-white" target="_blank">OpenSSL</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="mt-4">
+      <div class="card-header bg-dark-footer">
+        <p class="mb-0">&copy; 2025 Lily Gross. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
